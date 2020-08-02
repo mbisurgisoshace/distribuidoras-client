@@ -1,0 +1,183 @@
+@import 'colors';
+@import 'fonts';
+
+.Sidebar {
+    display: flex;
+    flex-direction: column;
+    width: 60px;
+    min-width: 60px;
+    background-color: $color-white;
+    border-right: 1px solid $color-primary;
+    padding: 1rem 0;
+    justify-content: space-between;
+    /*transition: all 0.2s;*/
+
+    .SidebarChevron {
+        height: 15px;
+        width: 15px;
+        margin-right: 0.5rem;
+        align-self: flex-end;
+
+        &:hover {
+            cursor: pointer;
+        }
+    }
+
+    &.expanded {
+        width: 150px;
+        min-width: 150px;
+    }
+}
+
+.SidebarGroup {
+    position: relative;
+
+    &:not(:last-child) {
+        margin-bottom: 1rem;
+    }
+    
+    .SidebarGroupTitle {
+        display: flex;
+        align-items: center;
+        padding: 0.5rem 0;
+    
+        &.expanded {
+            justify-content: flex-start;
+            padding: 0.5rem 1rem;
+
+            & > p {
+                margin: 0;
+                margin-left: 0.5rem;
+                font-family: $font-family-secondary;
+                color: $color-greyscale-darker;
+            }
+        }
+
+        &.collapsed {
+            height: 36px;
+            justify-content: center;
+
+            &.selected {
+                background-color: $color-primary;
+                
+                .SidebarIcon {
+                    fill: $color-white;
+                }
+
+                &:hover {
+                    background-color: $color-primary;
+
+                    .SidebarIcon {
+                        fill: $color-white;
+                    }
+                }
+            }
+
+            &:hover {
+                cursor: pointer;
+                background-color: $color-greyscale-light;
+                
+                .SidebarIcon {
+                    fill: $color-primary;
+                }
+            }
+        }
+    }
+
+    &.expanded {
+        .SidebarGroupItems {
+            display: flex;
+            flex-direction: column;
+        }
+    }
+
+    &.collapsed {
+        .SidebarGroupItems {
+            display: none;
+        }
+
+        &:hover {
+            .SidebarGroupItems {
+                width: 150px;
+                position: absolute;
+                left: 60px;
+                top: 0;
+                display: flex;
+                flex-direction: column;
+                background-color: $color-primary;
+                border-top-right-radius: 15px;
+                border-bottom-right-radius: 15px;
+                padding-bottom: 0.5rem;
+                overflow: hidden;
+                z-index: 9999
+            }
+        }
+    }
+}
+
+.SidebarMenu {
+    font-family: $font-family-secondary;
+    color: $color-white;
+
+    .SidebarMenuItem {
+        display: flex;
+        align-items: center;
+        padding: 0.25rem 1rem;
+
+        &:not(:last-child) {
+            margin-bottom: 0.5rem;
+        }
+
+        a {
+            width: 100%;
+        }
+        
+        &.expanded {
+            padding-left: 2rem;
+
+            a:link, a:visited, a:active {
+                font-family: $font-family-primary;
+                color: $color-primary;
+                text-decoration: none;
+            }
+
+            &.selected {
+                background-color: $color-primary;
+                
+                a:link, a:visited, a:active {
+                    color: $color-white;
+                }
+            }
+
+            &:hover {
+                background-color: $color-greyscale-light;
+            }
+        }
+
+        &.collapsed {
+            a:link, a:visited, a:active {
+                font-family: $font-family-primary;
+                color: $color-white;
+                text-decoration: none;
+            }
+
+            &.selected {
+                background-color: $color-primary-dark;
+                
+                a:link, a:visited, a:active {
+                    color: $color-white;
+                }
+            }
+
+            &:hover {
+                background-color: $color-primary-light;
+            }
+        }
+    }
+}
+
+.SidebarIcon {
+    height: 20px;
+    width: 20px;
+    fill: $color-primary;
+}

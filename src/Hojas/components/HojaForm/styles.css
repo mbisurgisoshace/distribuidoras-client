@@ -1,0 +1,154 @@
+@import 'fonts';
+@import 'colors';
+
+.HojaForm {
+  width: 100%;
+  padding: 2rem;
+  background-color: $color-greyscale-lightest;
+}
+
+.FormWrapper {
+  display: flex;
+  padding: 10px;
+  background-color: $color-white;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.16);
+  border-radius: 5px;
+  flex-wrap: wrap;
+  width: 1440px;
+  box-sizing: border-box;
+  margin: 0 auto;
+  position: relative;
+}
+
+.HojaSummary {
+  display: flex;
+  flex-direction: column;
+  width: 300px;
+  padding: 5px;
+  box-sizing: border-box;
+
+  .HojaNumero {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $color-greyscale-darker;
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+
+    span {
+      font-weight: bold;
+      color: $color-primary;
+      margin-right: 5px;
+    }
+  }
+
+  .EstadosWrapper {
+    margin-top: auto;
+
+    :not(:last-child) {
+      margin-bottom: 10px;
+    }
+  }
+
+  .HojaEstado {
+    width: 100px;
+    border-radius: 5px;
+    padding: 0.25rem;
+    margin: 0 auto;
+    margin-top: auto;
+    text-align: center;
+    text-transform: uppercase;
+    font-family: $font-family-secondary;
+
+    &.activo {
+      color: #6ab04c;
+      border: 1px solid #6ab04c;
+      background-color: rgba(106, 176, 76, 0.5);
+    }
+
+    &.inactivo {
+      color: #eb4d4b;
+      border: 1px solid #eb4d4b;
+      background-color: rgba(235, 77, 75, 0.5);
+    }
+
+    &.pendiente {
+      color: rgba(249, 202, 36, 1);
+      border: 1px solid rgba(249, 202, 36, 1);
+      background-color: rgba(249, 202, 36, 0.5);
+    }
+  }
+}
+
+.HojaInfo {
+  width: calc(100% - 300px);
+
+  .OpcionesPagoWrapper {
+    margin-top: 1rem;
+
+    .OpcionesPagoTitle {
+      color: $color-primary;
+      font-family: $font-family-secondary;
+    }
+
+    i {
+      text-align: center;
+      font-size: 0.9rem;
+      color: $color-greyscale-light;
+
+      &:hover {
+        cursor: pointer;
+        color: $color-greyscale-mid;
+      }
+    }
+
+    .label {
+      color: $color-greyscale-darker;
+      font-family: $font-family-secondary;
+    }
+
+    .value {
+
+    }
+  }
+}
+
+.CondicionesWrapper {
+  width: 350px;
+  padding: 1rem;
+
+  .CondicionesItem {
+    display: flex;
+    justify-content: space-between;
+
+    .label {
+      color: $color-greyscale-darker;
+      font-family: $font-family-secondary;
+    }
+  }
+}
+
+.ButtonsWrapper {
+  display: flex;
+  justify-content: flex-end;
+
+  :not(:last-child) {
+    margin-right: 10px;
+  }
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+
+  :not(:last-child) {
+    margin-right: 10px;
+  }
+}
+
+.ControlText {
+  color: #eb4d4b;
+  font-size: 0.75rem;
+  font-family: $font-family-secondary;
+}
+

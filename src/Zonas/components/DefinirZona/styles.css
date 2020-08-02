@@ -1,0 +1,132 @@
+@import 'colors';
+@import 'fonts';
+
+:global(.saleMapMarker) {
+	border: 1px solid #000;
+	background-color: $color-primary;
+	border-radius: 50px;
+	height: 15px !important;
+	width: 15px !important;
+	margin-left: -9.5px !important;
+	margin-top: -9.5px !important;
+	box-shadow: rgba(0, 0, 0, 0.7) 2px 2px 5px;
+}
+
+.container {
+	height: 100%;
+	width: 100%;
+	display: flex;
+	position: relative;
+}
+
+.checkbox {
+	display: flex;
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	z-index: 9999;
+	background-color: $color-greyscale-light;
+    padding: 0.25rem;
+	border-radius: 5px;
+	font-family: $font-family-primary;
+	font-size: 0.75rem;
+	align-items: center;
+}
+
+.ZonasForm {
+	width: 22rem;
+	background-color: $color-greyscale-light;
+	padding: 1rem 1rem;
+	overflow-y: scroll;
+
+	.ZonasTitle {
+		font-size: 2rem;
+		font-family: $font-family-secondary;
+		color: $color-primary-dark;
+		margin: 0;
+	}
+
+	.ZonaFieldGroup {
+		padding: 0.75rem 0.25rem;
+
+		.GroupHeader {
+			position: relative;
+
+			&:hover {
+				cursor: pointer;
+			}
+
+			&:hover .GroupActions {
+				display: flex;
+				flex-direction: column;
+				justify-content: space-around;
+			}
+		}
+
+		.MoreActions {
+			font-size: 2rem;
+			font-weight: bold;
+			position: absolute;
+			top: -35px;
+			right: 0;
+
+			&:hover {
+				cursor: pointer;
+			}
+		}
+
+		.GroupActions {
+			display: none;
+			position: absolute;
+			width: 123px;
+			height: 60px;
+			border: 1px solid $color-greyscale-light;
+			border-radius: 4px;
+			right: 0;
+			top: 15px;
+			z-index: 10;
+			box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.16);
+			font-family: $font-family-primary;
+			color: $color-greyscale-darker;
+			background-color: #fff;
+		}
+
+		.Action {
+			padding: 0 5px;
+		}
+
+		.ellipsis {
+			width: 20px;
+			height: 20px;
+			position: absolute;
+			top: 0;
+			right: 0;
+
+			&:hover {
+				cursor: pointer;
+			}
+		}
+	}
+
+	.buttonContainer {
+		display: flex;
+		justify-content: flex-end;
+	}
+
+	.cancelBtn {
+		margin-right: 5px;
+	}
+
+	.label {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		width: 80%;
+	}
+
+	.color {
+		border: 1px solid #000;
+		height: 12px;
+		width: 12px;
+	}
+}

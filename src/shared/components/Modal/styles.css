@@ -1,0 +1,162 @@
+@import 'colors';
+@import 'fonts';
+
+.Modal {
+  position: fixed;
+  background: rgba(0,0,0,0.5);
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  padding: 5%;
+}
+
+.ModalInner {
+  background: white;
+  margin: 0 auto;
+  border-radius: 3px;
+  min-width: 10%;
+  width: fit-content;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+
+  &:global(.fullWidth) {
+    width: 100%;
+  }
+}
+
+.ModalMedium {
+  width: 70%;
+  height: 70%;
+}
+
+.ModalLarge {
+  width: 100%;
+  height: 100%;
+}
+
+.ModalSmall {
+  width: 30%;
+  height: 30%;
+
+  & .ModalFooter {
+    padding: 0;
+  }
+}
+
+.ModalFit {
+  & .ModalFooter {
+    padding: 5px;
+  }
+}
+
+.ModalHeader{
+  &.textContent{
+    padding: 23px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    border-bottom: 1px solid $color-greyscale-light;
+    font-size: 1.5rem;
+    color: $color-greyscale-darkest;
+  }
+
+  & > .ExtendedModalHeader{
+    padding: 23px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid $color-greyscale-light;
+
+
+    .ExtendedModalHeaderTitle {
+      font-size: 1.5rem;
+      color: $color-greyscale-darkest;
+      display: flex;
+      align-items: center;
+
+      & > a{
+        color: $color-primary-dark;
+        font-size: 1rem;
+        margin-left: 0.5rem;
+      }
+    }
+
+    .ExtendedModalHeaderActions {
+      display: flex;
+      align-items: center;
+
+      .FilterHeaderClear {
+        border: none;
+        background-color: transparent;
+        color: $color-primary;
+        font-family: $font-family-secondary;
+        font-size: 0.90rem;
+        height: auto !important;
+        padding: 0 !important;
+        margin-left: 1rem;
+
+        &:hover {
+          border: none;
+          background-color: transparent;
+          text-decoration: underline;
+          color: $color-primary;
+        }
+      }
+    }
+
+    .ExtendedModalHeaderActionsSearch {
+      margin-top: 0 !important;
+      margin-bottom: 0;
+    }
+  }
+}
+
+.ModalFooter {
+  display: flex;
+  background-color: $color-greyscale-white;
+  justify-content: space-between;
+  padding: 23px;
+  border-bottom-left-radius: 3px;
+  border-bottom-right-radius: 3px;
+  border-top: 1px solid $color-greyscale-light;
+}
+
+.ModalButtons {
+  /*position: relative;
+  top: 20px;*/
+  margin-left: auto;
+}
+
+.ModalButtons button {
+  display: inline-block;
+  margin: 5px;
+  height: auto;
+  padding: 5px;
+}
+
+.ModalButtons button[type=primary] {
+  background-color: $color-primary;
+  color: $color-greyscale-white;
+  font: $font-family-secondary;
+}
+
+.ModalButtons button[type=secondary] {
+  background-color: $color-greyscale-light;
+  color: $color-greyscale-dark;
+  font: $font-family-secondary;
+}
+
+.OkBtn {
+  background-color: $color-primary;
+  color: $color-greyscale-white !important;
+  font-family: $font-family-secondary !important;
+}
+
+.CancelBtn {
+  background-color: $color-greyscale-light;
+  color: $color-greyscale-dark !important;
+  font-family: $font-family-secondary !important;
+}

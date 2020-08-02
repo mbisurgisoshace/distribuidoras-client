@@ -1,0 +1,41 @@
+@import 'colors';
+@import 'fonts';
+
+.ContainerWithNavigation {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.NavigationBar {
+    height: 35px;
+    background-color: $color-primary;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1rem;
+
+    .NavigationBarUserInfo {
+        display: flex;
+        align-items: center;
+        font-family: $font-family-secondary;
+        color: $color-white;
+    }
+
+    .NavigationBarLogo {
+        height: 30px;
+        width: 30px;
+    }
+
+    .NavigationBarIcon {
+        height: 15px;
+        width: 15px;
+        background-color: $color-white;
+        fill: $color-primary;
+        border-radius: 2px;
+        margin-left: 0.75rem;
+        padding: 0.25rem; 
+        cursor: pointer;
+    }
+}
+

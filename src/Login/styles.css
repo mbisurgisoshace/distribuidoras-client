@@ -1,0 +1,22 @@
+@import 'colors';
+
+.Login {
+	background: $color-greyscale-light;
+	flex: 1;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+  flex-direction: column;
+  
+  .LoginForm {
+    background: $color-white;
+    border-radius: 5px;
+    padding: 2rem;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.16);
+
+    .ButtonContainer {
+      display: flex;
+      justify-content: flex-end;
+    }
+  }
+}

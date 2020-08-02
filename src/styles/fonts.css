@@ -1,0 +1,24 @@
+$font-family-primary: "Roboto-Regular";
+$font-family-secondary: "Roboto-Medium";
+$font-family-tertiary: "Roboto-Bold";
+
+@font-face {
+    font-family: "Roboto-Regular";
+    src: url("/assets/fonts/Roboto-Light.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Roboto-Medium";
+    src: url("/assets/fonts/Roboto-Medium.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Roboto-Bold";
+    src: url("/assets/fonts/Roboto-Bold.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+}

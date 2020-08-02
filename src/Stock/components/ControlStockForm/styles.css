@@ -1,0 +1,135 @@
+@import 'fonts';
+@import 'colors';
+
+.ControlStockForm {
+  display: flex;
+  padding: 2rem;
+}
+
+.FormWrapper {
+  display: flex;
+  flex-direction: column;
+  padding: 10px 0;
+  background-color: $color-white;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.16);
+  border-radius: 5px;
+  width: max-content;
+  box-sizing: border-box;
+  margin: 0 auto;
+  position: relative;
+}
+
+.FormTitle {
+  padding: 0 10px;
+  font-family: $font-family-secondary;
+  color: $color-greyscale-darker;
+}
+
+.ColumnaStockWrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.ColumnaStockWrapperHeader {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  padding: 0 10px;
+}
+
+.DateInput {
+  margin-top: 0 !important;
+}
+
+.lock {
+  position: absolute;
+  right: 5px;
+  top: 5px;
+  font-size: 0.9rem;
+  color: $color-greyscale-mid;
+
+  &:hover {
+    cursor: pointer;
+    color: $color-greyscale-dark;
+  }
+}
+
+.ColumnaStock {
+  width: 75px;
+  height: 75px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  .label {
+    text-align: center;
+    font-size: 0.95rem;
+    font-family: $font-family-secondary;
+    color: $color-greyscale-darker;
+  }
+
+  .check {
+    text-align: center;
+    font-size: 0.9rem;
+    color: rgba(106, 176, 76, 1);
+  }
+
+  .search {
+    text-align: center;
+    font-size: 0.9rem;
+    color: $color-greyscale-light;
+
+    &:hover {
+      cursor: pointer;
+      color: $color-greyscale-mid;
+    }
+  }
+
+  &:not(:last-child) {
+    border-right: 1px solid $color-greyscale-light;
+  }
+}
+
+.DetalleStock {
+  height: 100%;
+  padding: 1rem;
+
+  .Header {
+    text-align: left;
+    font-family: $font-family-primary;
+    font-size: 1.5rem;
+  }
+
+  .Articulo {
+    color: $color-primary;
+  }
+
+  .Group {
+    margin-top: 0.5rem;
+  }
+
+  .Title {
+    text-align: left;
+    font-family: $font-family-secondary;
+    color: $color-greyscale-darker;
+  }
+
+  .Envases {
+    display: flex;
+    flex-direction: row;
+  }
+
+  .Subtitle {
+    width: 5rem;
+    color: $color-greyscale-mid;
+    text-align: left;
+  }
+
+  .Value {
+    width: 4rem;
+    text-align: right;
+    margin: 0 0.25rem;
+  }
+}

@@ -1,0 +1,5 @@
+{
+    "__JWT_SECRET__": "__jWt-s3cReT__",
+    "ZONA": "/zonas/{zona_id}",
+    "ZONAS": "/zonas"
+}

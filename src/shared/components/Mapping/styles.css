@@ -1,0 +1,9 @@
+:global(.leaflet-container) {
+    height: 100%;
+    width: 100%;
+}
+
+.MappingContainer {
+    height: 100%;
+    width: 100%;
+}

@@ -1,0 +1,25 @@
+.AllHojas {
+  width: 100%;
+  padding: 2rem;
+  background-color: $color-greyscale-lightest;
+}
+
+.AllHojasWrapper {
+  height: 100%;
+  display: flex;
+  padding: 10px;
+  background-color: $color-white;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.16);
+  border-radius: 5px;
+  flex-wrap: wrap;
+  width: 1440px;
+  box-sizing: border-box;
+  margin: 0 auto;
+  position: relative;
+}
+
+.Estado {
+  width: 15px;
+  height: 15px;
+  border-radius: 100px;
+}

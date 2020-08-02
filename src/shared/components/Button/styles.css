@@ -1,0 +1,55 @@
+@import 'colors';
+
+.Button {
+    border-radius: 3px;
+    cursor: pointer;
+    outline: none;
+    transition: all 0.2s ease-in-out;
+    text-transform: uppercase;
+
+    &.medium {
+        padding: 0 1.5rem;
+        height: 56px;
+    }
+
+    &.small {
+        padding: 0 1.5rem;
+        height: 38px;
+    }
+
+    &.tiny {
+
+    }
+
+    &.primary {
+        background-color: $color-primary;
+        border: 1px solid $color-primary;
+        color: $color-white;
+
+        &:hover {
+            background-color: $color-primary-dark;
+        }
+
+        &.outline {
+            background-color: $color-white;
+            border: 1px solid $color-primary;
+            color: $color-primary;
+
+            &:hover {
+                background-color: $color-primary;
+                color: $color-white;
+            }
+        }
+
+        &.disabled, &.disabled:hover {
+            cursor: auto;
+            color: $color-greyscale-mid-light;
+            border-color: $color-greyscale-mid;
+            background-color: $color-greyscale-light;
+        }
+    }
+
+    &.secondary {
+
+    }
+}
