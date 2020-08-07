@@ -1,9 +1,10 @@
 import BaseService from './baseService';
-import { Comercio as IComercio, Pedido as IPedido } from '../types';
+import { Comercio as IComercio, Pedido as IPedido, StockItem as IStockItem } from '../types';
 
 export default class ComerciosService extends BaseService {
   static comerciosRoute = '/comercios';
   static comercioRoute = '/comercios/{comercio_id}';
+  static stockComerciosRoute = '/comercios/stock';
   static pedidosComerciosRoute = '/comercios/pedidos';
 
   public static async getComercios(withStock: boolean = false): Promise<Array<IComercio>> {
@@ -26,5 +27,9 @@ export default class ComerciosService extends BaseService {
   public static async updateComercio(comercio: IComercio, comercio_id: number | string): Promise<IComercio> {
     let route = this.buildRoute(this.comercioRoute, { comercio_id });
     return await this.putJSONRequest<IComercio, IComercio>(route, comercio);
+  }
+
+  public static async createStockComercio(items: Array<IStockItem>): Promise<Array<IStockItem>> {
+    return await this.postJSONRequest<Array<IStockItem>, Array<IStockItem>>(this.stockComerciosRoute, items);
   }
 }

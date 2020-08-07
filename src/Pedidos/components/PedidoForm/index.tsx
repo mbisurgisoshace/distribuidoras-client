@@ -304,7 +304,7 @@ export class PedidoForm extends React.Component<PedidoFormProps, PedidoFormState
       observaciones: editablePedido.observaciones,
       condicion_venta_id: editablePedido.condicion_venta_id,
       tipo_movimiento_id: editablePedido.tipo_movimiento_id,
-      estado_movimiento_id: editablePedido.hoja_ruta_id !== null ? 1 : 2,
+      estado_movimiento_id: editablePedido.hoja_ruta_id ? 6 : 2,
       fecha: moment(editablePedido.fecha, 'DD/MM/YYYY').format('YYYY-MM-DD')
     }
 
@@ -394,8 +394,6 @@ export class PedidoForm extends React.Component<PedidoFormProps, PedidoFormState
     }));
 
     const filteredComercios = this.filterComercios();
-
-    console.log('filteredComercios', filteredComercios);
 
     return (
       <div className={styles.PedidoForm}>

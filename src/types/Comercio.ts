@@ -29,3 +29,22 @@ export interface Pedido {
   pagado: boolean;
   entregado: boolean;
 }
+
+export interface Stock {
+  tipo: string;
+  fecha: string;
+  comercio_id?: number;
+  comprobante?: string;
+  items?: Array<StockItem>;
+}
+
+export interface StockItem {
+  id?: number;
+  tipo?: string;
+  fecha?: string;
+  comercio_id?: number;
+  comprobante?: string;
+  envase_id?: number;
+  cantidad?: number;
+  movimiento_enc_id?: number;
+}

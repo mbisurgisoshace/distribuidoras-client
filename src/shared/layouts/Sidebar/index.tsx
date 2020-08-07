@@ -99,7 +99,8 @@ export class Sidebar extends React.Component<SidebarProps, SidebarState> {
 								<SidebarMenu
 									menuitems={[
 										{ href: '/stock/control', title: 'Control', subgroup: 'control' },
-										{ href: '/stock/cierre', title: 'Cierre', subgroup: 'cierre' }
+										{ href: '/stock/cierre', title: 'Cierre', subgroup: 'cierre' },
+										{ href: '/comercios/stock/new', title: 'Stock P.E', subgroup: 'stock-pe' }
 									]}
 									title="Stock"
 									group="/stock"

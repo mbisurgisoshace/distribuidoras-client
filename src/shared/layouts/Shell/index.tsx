@@ -19,6 +19,7 @@ import { ControlStock } from '../../../Stock/components/ControlStock';
 import { AllClientes } from '../../../Clientes/components/AllClientes';
 import { NewComercio } from '../../../Comercios/components/NewComercio';
 import { AllComercios } from '../../../Comercios/components/AllComercios';
+import { ComercioStock } from '../../../Comercios/components/ComercioStock';
 
 const AuthenticatedRoutes = enhanceWithHeader(() => (
   <React.Fragment>
@@ -32,6 +33,7 @@ const AuthenticatedRoutes = enhanceWithHeader(() => (
     <AuthenticatedRoute path="/clientes/:clienteId(\d+)" exact component={Cliente}/>
     <AuthenticatedRoute path="/comercios" exact component={AllComercios}/>
     <AuthenticatedRoute path="/comercios/new" exact component={NewComercio}/>
+    <AuthenticatedRoute path="/comercios/stock/new" exact component={ComercioStock}/>
     <AuthenticatedRoute path="/comercios/:comercioId(\d+)" exact component={Comercio}/>
     <AuthenticatedRoute path="/pedidos/new" exact component={NewPedido}/>
     <AuthenticatedRoute path="/stock" exact component={AllClientes}/>

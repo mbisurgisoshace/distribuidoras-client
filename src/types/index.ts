@@ -6,7 +6,7 @@ import { Chofer } from './Chofer';
 import { Envase } from './Envase';
 import { Cliente } from './Cliente';
 import { Polygon } from './Polygon';
-import { Comercio, Pedido } from './Comercio';
+import { Comercio, Pedido, Stock, StockItem } from './Comercio';
 import { ColumnaStock, MovimientoStock, MovimientoStockItem } from './Stock';
 import { Precio, ListaPrecio } from './Precio';
 import { Carga, CargaItem } from './Carga';
@@ -20,6 +20,7 @@ export {
   Hoja,
   Zona,
   Canal,
+  Stock,
   Carga,
   Camion,
   Chofer,
@@ -29,6 +30,7 @@ export {
   Cliente,
   Comercio,
   CargaItem,
+  StockItem,
   ZonaInput,
   Subzona,
   Polygon,
