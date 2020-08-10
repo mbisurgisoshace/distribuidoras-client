@@ -6,6 +6,7 @@ export default class ComerciosService extends BaseService {
   static comercioRoute = '/comercios/{comercio_id}';
   static stockComerciosRoute = '/comercios/stock';
   static pedidosComerciosRoute = '/comercios/pedidos';
+  static pedidosEntregarComerciosRoute = '/comercios/pedidos/entregar';
 
   public static async getComercios(withStock: boolean = false): Promise<Array<IComercio>> {
     let query = withStock ? '?withStock=true' : '';
@@ -14,6 +15,10 @@ export default class ComerciosService extends BaseService {
 
   public static async getComercio(id: number): Promise<IComercio> {
     return await this.getRequest<IComercio>(this.buildRoute(this.comercioRoute, { comercio_id: id }));
+  }
+
+  public static async getPedidos(): Promise<Array<any>> {
+    return await this.getRequest<Array<any>>(this.pedidosComerciosRoute);
   }
 
   public static async createComercio(comercio: IComercio): Promise<IComercio> {
@@ -27,6 +32,10 @@ export default class ComerciosService extends BaseService {
   public static async updateComercio(comercio: IComercio, comercio_id: number | string): Promise<IComercio> {
     let route = this.buildRoute(this.comercioRoute, { comercio_id });
     return await this.putJSONRequest<IComercio, IComercio>(route, comercio);
+  }
+
+  public static async entregarPedidoComercio(pedidos_id: Array<number>): Promise<any> {
+    return await this.postJSONRequest<Array<number>, any>(this.pedidosEntregarComerciosRoute, pedidos_id);
   }
 
   public static async createStockComercio(items: Array<IStockItem>): Promise<Array<IStockItem>> {
