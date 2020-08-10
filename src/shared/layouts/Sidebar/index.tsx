@@ -78,6 +78,7 @@ export class Sidebar extends React.Component<SidebarProps, SidebarState> {
 									menuitems={[
 										{ href: '/hojas', title: 'Hojas de Ruta', subgroup: 'hojas' },
 										{ href: '/pedidos/new', title: 'Nuevo Pedido', subgroup: 'pedidos' },
+										{ href: '/comercios/entregas', title: 'Monitor Entregas', subgroup: 'entregas' },
 										// { href: '/ventas/agregar', title: 'Movimientos', subgroup: 'movimientos' },
 										// { href: '/ventas/eliminar', title: 'Remitos', subgroup: 'remitos' },
 										// { href: '/ventas/eliminar', title: 'Cierre Diario', subgroup: 'cierre' }
