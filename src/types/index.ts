@@ -1,11 +1,11 @@
 import { User } from './User';
 import { Hoja } from './Hoja';
-import { Canal } from './Canal';
 import { Camion } from './Camion';
 import { Chofer } from './Chofer';
 import { Envase } from './Envase';
 import { Cliente } from './Cliente';
 import { Polygon } from './Polygon';
+import { Canal, Subcanal } from './Canal';
 import { Comercio, Pedido, Stock, StockItem } from './Comercio';
 import { ColumnaStock, MovimientoStock, MovimientoStockItem } from './Stock';
 import { Precio, ListaPrecio } from './Precio';
@@ -28,12 +28,13 @@ export {
   Precio,
   Envase,
   Cliente,
+  Subzona,
+  Polygon,
   Comercio,
+  Subcanal,
   CargaItem,
   StockItem,
   ZonaInput,
-  Subzona,
-  Polygon,
   Movimiento,
   ListaPrecio,
   ColumnaStock,

@@ -17,6 +17,7 @@ import {
   Canal as ICanal,
   Cliente as ICliente,
   Subzona as ISubzona,
+  Subcanal as ISubcanal,
   ListaPrecio as IListaPrecio,
   CondicionIva as ICondicionIva,
   CondicionVenta as ICondicionVenta,
@@ -45,6 +46,7 @@ interface ClienteFormState {
   selectedZonaId: number;
   canales: Array<ICanal>;
   subzonas: Array<ISubzona>;
+  subcanales: Array<ISubcanal>;
   listasPrecio: Array<IListaPrecio>;
   condicionesIva: Array<ICondicionIva>;
   condicionesVenta: Array<ICondicionVenta>;
@@ -60,6 +62,7 @@ export class ClienteForm extends React.Component<ClienteFormProps, ClienteFormSt
       zonas: [],
       canales: [],
       subzonas: [],
+      subcanales: [],
       listasPrecio: [],
       condicionesIva: [],
       condicionesVenta: [],
@@ -72,6 +75,7 @@ export class ClienteForm extends React.Component<ClienteFormProps, ClienteFormSt
     const zonas = await ZonasService.getZonas();
     const canales = await CanalesService.getCanales();
     const subzonas = await SubzonasService.getSubzonas();
+    const subcanales = await CanalesService.getSubcanales();
     const listasPrecio = await PreciosService.getListasPrecio();
     const condicionesIva = await CondicionesIvaService.getCondicionesIva();
     const condicionesVenta = await CondicionesVentaService.getCondicionesVenta();
@@ -80,7 +84,7 @@ export class ClienteForm extends React.Component<ClienteFormProps, ClienteFormSt
       await this.createNewCliente();
     }
 
-    this.setState({ zonas, canales, subzonas, listasPrecio, condicionesIva, condicionesVenta, loading: false });
+    this.setState({ zonas, canales, subzonas, subcanales, listasPrecio, condicionesIva, condicionesVenta, loading: false });
   }
 
   createNewCliente = () => {
@@ -135,6 +139,7 @@ export class ClienteForm extends React.Component<ClienteFormProps, ClienteFormSt
 
   onFieldChange = (e) => {
     const { editableCliente = {} } = this.state;
+
     this.setState({
       editableCliente: {
         ...editableCliente,
@@ -195,7 +200,7 @@ export class ClienteForm extends React.Component<ClienteFormProps, ClienteFormSt
 
   render() {
     const { nuevo, ultimoPedido } = this.props;
-    const { zonas, canales, subzonas, selectedZonaId, listasPrecio, condicionesIva, condicionesVenta, loading } = this.state;
+    const { zonas, canales, subzonas, subcanales, selectedZonaId, listasPrecio, condicionesIva, condicionesVenta, loading } = this.state;
 
     const zonasOptions = zonas.map(z => ({
       label: z.zona_nombre,
@@ -210,6 +215,11 @@ export class ClienteForm extends React.Component<ClienteFormProps, ClienteFormSt
     const canalesOptions = canales.map(c => ({
       label: c.canal_nombre,
       value: c.canal_id
+    }));
+
+    const subcanalesOptions = subcanales.filter(s => s.canal_id === this.getUpdatedCliente().canal_id).map(s => ({
+      label: s.subcanal,
+      value: s.id
     }));
 
     const listasPrecioOptions = listasPrecio.map(p => ({
@@ -344,6 +354,9 @@ export class ClienteForm extends React.Component<ClienteFormProps, ClienteFormSt
               <Select size='small' label='Canal' name='canal_id' placeholder='Seleccionar...'
                       value={this.getUpdatedCliente().canal_id || 1}
                       options={canalesOptions} onChange={this.onFieldChange}/>
+              <Select size='small' label='Subcanal' name='subcanal_id' placeholder='Seleccionar...'
+                      value={this.getUpdatedCliente().subcanal_id || null}
+                      options={subcanalesOptions} onChange={this.onFieldChange}/>
               <Select size='small' label='Lista de Precio' name='lista_precio_id' placeholder='Seleccionar...'
                       value={this.getUpdatedCliente().lista_precio_id}
                       options={listasPrecioOptions} onChange={this.onFieldChange}/>

@@ -19,6 +19,7 @@ export interface Cliente {
   cuit?: string;
   condicion_venta_id?: number;
   canal_id?: number;
+  subcanal_id?: number;
   lista_precio_id?: number;
   fecha_ultima_compra?: string;
   estado?: number;
