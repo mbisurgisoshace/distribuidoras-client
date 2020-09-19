@@ -50,6 +50,12 @@
     }
 
     &.secondary {
+        background-color:#2ecc71;
+        border: 1px solid #2ecc71;
+        color: $color-white;
 
+        &:hover {
+            background-color: #27ae60;
+        }
     }
 }

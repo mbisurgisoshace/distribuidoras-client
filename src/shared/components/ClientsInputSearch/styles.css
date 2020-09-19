@@ -1,0 +1,72 @@
+@import 'colors';
+@import 'fonts';
+
+.ClientsInputSearch {
+  width: 300px;
+  position: relative;
+
+  .InputSearch {
+    margin: 0;
+  }
+
+  .SearchResults {
+    top: 40px;
+    width: 550px;
+    z-index: 9999;
+    overflow-y: auto;
+    max-height: 250px;
+    border-radius: 3px;
+    position: absolute;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.28);
+
+    &.visible {
+      display: block;
+    }
+
+    &.invisible {
+      display: none;
+    }
+
+    .ListGroup {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .SearchResultsHeader {
+      display: flex;
+      font-size: 14px;
+      padding: 5px 10px;
+      align-items: center;
+      margin: 0 !important;
+      background-color: $color-primary-dark;
+
+      & > * {
+        color: $color-white;
+        margin: 0 !important;
+        font-family: $font-family-secondary;
+      }
+    }
+
+    .ListGroupItem {
+      display: flex;
+      cursor: pointer;
+      font-size: 12px;
+      //padding: 5px 10px;
+      overflow-y: hidden;
+      align-items: center;
+      margin: 0 !important;
+
+      &:hover, &.active {
+        border-color: #d3d5d7;
+        background-color: #e1e3e5;
+      }
+
+      p {
+        padding: 0;
+        margin: 0 !important;
+      }
+    }
+  }
+}

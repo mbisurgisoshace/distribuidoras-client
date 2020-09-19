@@ -14,14 +14,14 @@ import { Select } from '../../../shared/components/Select';
 import { DatePicker } from '../../../shared/components/DatePicker';
 import { LoadingContainer } from '../../../shared/components/LoadingContainer';
 
-import { ClientsSearch } from './ClientsSearch';
-
 import {
   Hoja as IHoja,
+  Canal as ICanal,
   Precio as IPrecio,
   Envase as IEnvase,
   Chofer as IChofer,
   Cliente as ICliente,
+  Subzona as ISubZona,
   Comercio as IComercio,
   Movimiento as IPedido,
   MovimientoItem as IItem,
@@ -39,6 +39,10 @@ import MovimientosService from '../../../services/movimientos';
 import { Modal } from '../../../shared/components/Modal';
 import ComerciosService from '../../../services/comercios';
 import PuntoEntregaMap from './PuntoEntregaMap';
+import { ClientsInputSearch } from '../../../shared/components/ClientsInputSearch/ClientsInputSearch';
+import ClientesService from '../../../services/clientes';
+import CanalesService from '../../../services/canales';
+import SubzonasService from '../../../services/subzonas';
 
 type IEditable<T> = { [P in keyof T]?: T[P] };
 
@@ -49,7 +53,6 @@ interface PedidoFormProps {
 
 interface PedidoFormState {
   loading: boolean;
-  cliente: ICliente;
   hojas: Array<IHoja>;
   comercio: IComercio;
   selectedTab: number;
@@ -57,13 +60,17 @@ interface PedidoFormState {
   selectedEnvio: string;
   isAddingItem: boolean;
   pedidoGenerado: number;
+  editarCliente: boolean;
+  canales: Array<ICanal>;
   envases: Array<IEnvase>;
   precios: Array<IPrecio>;
   choferes: Array<IChofer>;
+  clientes: Array<ICliente>;
   pedidoConfirmado: boolean;
+  subzonas: Array<ISubZona>;
   comercios: Array<IComercio>;
+  cliente: IEditable<ICliente>;
   editableItem: IEditable<IItem>;
-  toggleClientsSearchModal: boolean;
   editablePedido: IEditable<IPedido>;
   condicionesVenta: Array<ICondicionVenta>;
 }
@@ -76,7 +83,10 @@ export class PedidoForm extends React.Component<PedidoFormProps, PedidoFormState
       hojas: [],
       envases: [],
       precios: [],
+      canales: [],
       choferes: [],
+      clientes: [],
+      subzonas: [],
       cliente: null,
       loading: true,
       comercios: [],
@@ -87,15 +97,18 @@ export class PedidoForm extends React.Component<PedidoFormProps, PedidoFormState
       editablePedido: {},
       isAddingItem: false,
       selectedEnvio: 'dia',
+      editarCliente: false,
       pedidoGenerado: null,
       condicionesVenta: [],
-      pedidoConfirmado: false,
-      toggleClientsSearchModal: false
+      pedidoConfirmado: false
     };
   }
 
   async componentDidMount() {
     const envases = await EnvasesService.getEnvases();
+    const canales = await CanalesService.getCanales();
+    const subzonas = await SubzonasService.getSubzonas();
+    const clientes = await ClientesService.getClientes();
     const choferes = await ChoferesService.getChoferes();
     const comercios = await ComerciosService.getComercios(true);
     const condicionesVenta = await CondicionesVentaService.getCondicionesVenta();
@@ -107,7 +120,17 @@ export class PedidoForm extends React.Component<PedidoFormProps, PedidoFormState
       await this.createNewPedido();
     }
 
-    this.setState({ hojas, envases, choferes, loading: false, comercios, condicionesVenta });
+    this.setState({
+      hojas,
+      clientes,
+      envases,
+      canales,
+      subzonas,
+      choferes,
+      loading: false,
+      comercios,
+      condicionesVenta
+    });
   }
 
   handleKeyPress = (e) => {
@@ -122,7 +145,7 @@ export class PedidoForm extends React.Component<PedidoFormProps, PedidoFormState
     if (keyCode === 13 && isAddingItem && editableItem.envase_id && editableItem.cantidad > 0) {
       this.addItem(true);
     }
-  }
+  };
 
   createNewPedido = () => {
     const { editablePedido } = this.state;
@@ -306,7 +329,7 @@ export class PedidoForm extends React.Component<PedidoFormProps, PedidoFormState
       tipo_movimiento_id: editablePedido.tipo_movimiento_id,
       estado_movimiento_id: editablePedido.hoja_ruta_id ? 6 : 2,
       fecha: moment(editablePedido.fecha, 'DD/MM/YYYY').format('YYYY-MM-DD')
-    }
+    };
 
     const newPedido = await MovimientosService.createPedido(enc);
 
@@ -326,7 +349,7 @@ export class PedidoForm extends React.Component<PedidoFormProps, PedidoFormState
         movimiento_enc_id: newPedido.movimiento_enc_id,
         entregado: false,
         pagado: newPedido.condicion_venta_id === 3
-      }
+      };
 
       await ComerciosService.createPedidoComercio(pedido);
     }
@@ -349,8 +372,8 @@ export class PedidoForm extends React.Component<PedidoFormProps, PedidoFormState
     this.setState({
       pedidoGenerado: null,
       pedidoConfirmado: true
-    })
-  }
+    });
+  };
 
   filterComercios = () => {
     const { cliente, comercios, editablePedido } = this.state;
@@ -369,11 +392,40 @@ export class PedidoForm extends React.Component<PedidoFormProps, PedidoFormState
 
       return stock && distance;
     });
-  }
+  };
+
+  saveCliente = async () => {
+    const { cliente } = this.state;
+
+    await ClientesService.updateCliente(cliente, cliente.cliente_id);
+
+    this.setState({
+      editarCliente: false
+    });
+  };
+
+  getUpdatedCliente = () => {
+    const { cliente = {} } = this.state;
+
+    return {
+      ...cliente
+    };
+  };
+
+  onClienteFieldChange = (e) => {
+    const { cliente = {} } = this.state;
+
+    this.setState({
+      cliente: {
+        ...cliente,
+        [e.target.name]: e.target.value
+      }
+    });
+  };
 
   render() {
     const { nuevo } = this.props;
-    const { hojas, cliente, envases, choferes, comercio, loading, isAddingItem, selectedTab, selectedEnvio, controlError, comercios, condicionesVenta, pedidoConfirmado, toggleClientsSearchModal } = this.state;
+    const { hojas, cliente, envases, clientes, choferes, comercio, canales, subzonas, loading, editarCliente, isAddingItem, selectedTab, selectedEnvio, controlError, condicionesVenta, pedidoConfirmado } = this.state;
 
     const envasesOptions = envases.map(e => ({
       value: e.envase_id,
@@ -391,6 +443,16 @@ export class PedidoForm extends React.Component<PedidoFormProps, PedidoFormState
     const condicionesVentaOptions = condicionesVenta.map(c => ({
       label: c.condicion_venta_nombre,
       value: c.condicion_venta_id
+    }));
+
+    const subzonasOptions = subzonas.map(s => ({
+      label: s.sub_zona_nombre,
+      value: s.sub_zona_id
+    }));
+
+    const canalesOptions = canales.map(c => ({
+      label: c.canal_nombre,
+      value: c.canal_id
     }));
 
     const filteredComercios = this.filterComercios();
@@ -421,26 +483,102 @@ export class PedidoForm extends React.Component<PedidoFormProps, PedidoFormState
                 <div className={styles.ClienteWrapper}>
                   <div className={styles.ClienteWrapperHeader}>
                     <h3>Cliente</h3>
-                    <svg className={styles.Icons} onClick={() => this.setState({ toggleClientsSearchModal: true })}>
-                      <use xlinkHref={`/assets/images/sprite.svg#icon-users-solid`}></use>
-                    </svg>
-                    <svg className={styles.Icons} onClick={() => window.open('/clientes/new', '_blank')}>
-                      <use xlinkHref={`/assets/images/sprite.svg#icon-user-plus-solid`}></use>
-                    </svg>
+                    <ClientsInputSearch clientes={clientes}
+                                        onSelectClient={(cliente) => this.onClientSelected(cliente)}/>
+                    <Button size={'tiny'} onClick={() => window.open('/clientes/new', '_blank')}>Nuevo</Button>
+                    <Button
+                      size={'tiny'}
+                      type={editarCliente ? 'secondary' : 'primary'}
+                      disabled={!cliente}
+                      onClick={() => {
+                        editarCliente ? this.saveCliente() : this.setState({ editarCliente: true });
+                      }}>
+                      {editarCliente ? 'Guardar' : 'Editar'}
+                    </Button>
                   </div>
                   <div>
                     <div className={styles.ClienteDetailsFieldWrapper}>
                       <div className={styles.ClienteDetailsField}>
-                        <span>Razon Social:</span>
-                        <p>{cliente && cliente.razon_social || ''}</p>
+                        {editarCliente ? (
+                          <Input size='small' label='Razon Social' name='razon_social' fluid
+                                 onChange={this.onClienteFieldChange}
+                                 value={this.getUpdatedCliente().razon_social}/>
+                        ) : (
+                          <>
+                            <span>Razon Social:</span>
+                            <p>{cliente && this.getUpdatedCliente().razon_social || ''}</p>
+                          </>
+                        )}
                       </div>
                       <div className={styles.ClienteDetailsField}>
-                        <span>Domicilio:</span>
-                        <p>{`${cliente && cliente.calle || ''} ${cliente && cliente.altura || ''}`.trim()}</p>
+                        {editarCliente ? (
+                          <>
+                            <Input size='small' label='Calle' name='calle' fluid onChange={this.onClienteFieldChange}
+                                   value={this.getUpdatedCliente().calle}/>
+                            <div style={{ width: '5px' }}/>
+                            <Input size='small' label='Altura' name='altura' onChange={this.onClienteFieldChange}
+                                   value={this.getUpdatedCliente().altura}/>
+                          </>
+                        ) : (
+                          <>
+                            <span>Domicilio:</span>
+                            <p>{`${cliente && this.getUpdatedCliente().calle || ''} ${cliente && this.getUpdatedCliente().altura || ''}`.trim()}</p>
+                          </>
+                        )}
                       </div>
                       <div className={styles.ClienteDetailsField}>
-                        <span>Telefono:</span>
-                        <p>{cliente && cliente.telefono || ''}</p>
+                        {editarCliente ? (
+                          <Input size='small' label='Telefono' name='telefono' fluid onChange={this.onClienteFieldChange}
+                                 value={this.getUpdatedCliente().telefono}/>
+                        ) : (
+                          <>
+                            <span>Telefono:</span>
+                            <p>{cliente && cliente.telefono || ''}</p>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                    <div className={styles.ClienteDetailsFieldWrapper}>
+                      <div className={styles.ClienteDetailsField}>
+                        {editarCliente ? (
+                          <Select size='small' label='Canal' name='canal_id' placeholder='Seleccionar...'
+                                  value={this.getUpdatedCliente().canal_id || 1}
+                                  fluid
+                                  options={canalesOptions} onChange={this.onClienteFieldChange}/>
+                        ) : (
+                          <>
+                            <span>Canal:</span>
+                            <p>{cliente && canales.find(c => c.canal_id === cliente.canal_id).canal_nombre || ''}</p>
+                          </>
+                        )}
+                      </div>
+                      <div className={styles.ClienteDetailsField}>
+                        {editarCliente ? (
+                          <Select size='small' label='Sub Zona' name='zona_sub_id' placeholder='Seleccionar...'
+                                  value={this.getUpdatedCliente().zona_sub_id} options={subzonasOptions}
+                                  fluid
+                                  onChange={this.onClienteFieldChange}/>
+                        ) : (
+                          <>
+                            <span>Zona:</span>
+                            <p>{cliente && subzonas.find(s => s.sub_zona_id === cliente.zona_sub_id).sub_zona_nombre || ''}</p>
+                          </>
+                        )}
+                      </div>
+                      <div className={styles.ClienteDetailsField}>
+                        {editarCliente ? (
+                          <Select size='small' label='Condicion de Venta' name='condicion_venta_id'
+                                  placeholder='Seleccionar...'
+                                  value={this.getUpdatedCliente().condicion_venta_id || 1}
+                                  fluid
+                                  options={condicionesVentaOptions}
+                                  onChange={this.onClienteFieldChange}/>
+                        ) : (
+                          <>
+                            <span>Condicion de Venta:</span>
+                            <p>{cliente && condicionesVenta.find(c => c.condicion_venta_id === cliente.condicion_venta_id).condicion_venta_nombre || ''}</p>
+                          </>
+                        )}
                       </div>
                     </div>
                     <div style={{ height: '250px', width: '100%' }}>
@@ -541,7 +679,7 @@ export class PedidoForm extends React.Component<PedidoFormProps, PedidoFormState
             <div className={styles.PedidoInfoRight}>
               <Tabs
                 selectedIndex={selectedTab}
-                onSelect={(selectedTab) => this.setState({selectedTab})}
+                onSelect={(selectedTab) => this.setState({ selectedTab })}
               >
                 <TabList>
                   <Tab>Envío</Tab>
@@ -552,14 +690,14 @@ export class PedidoForm extends React.Component<PedidoFormProps, PedidoFormState
                     <label>
                       <input type="radio" value="dia"
                              checked={selectedEnvio === 'dia'}
-                             onChange={() => this.setState({selectedEnvio: 'dia'})}
+                             onChange={() => this.setState({ selectedEnvio: 'dia' })}
                       />
                       En el día
                     </label>
                     <label>
                       <input type="radio" value="programado"
                              checked={selectedEnvio === 'programado'}
-                             onChange={() => this.setState({selectedEnvio: 'programado'})}
+                             onChange={() => this.setState({ selectedEnvio: 'programado' })}
                       />
                       Programado
                     </label>
@@ -576,12 +714,12 @@ export class PedidoForm extends React.Component<PedidoFormProps, PedidoFormState
                   {controlError && <p className={styles.ControlText}>{controlError}</p>}
                 </TabPanel>
                 <TabPanel>
-                  <div style={{width: '100%', height: '350px', marginBottom: '10px'}}>
+                  <div style={{ width: '100%', height: '350px', marginBottom: '10px' }}>
                     <PuntoEntregaMap
                       lat={cliente && cliente.latitud}
                       lng={cliente && cliente.longitud}
                       comercios={filteredComercios}
-                      onSelectComercio={(comercio) => this.setState({comercio})}
+                      onSelectComercio={(comercio) => this.setState({ comercio })}
                     />
                   </div>
                   <div className={styles.ComercioDetailsField}>
@@ -604,22 +742,12 @@ export class PedidoForm extends React.Component<PedidoFormProps, PedidoFormState
               </Button>
             </div>
           </div>
-
-          {toggleClientsSearchModal && (
-            <ClientsSearch
-              onClose={() => this.setState({
-                toggleClientsSearchModal: false
-              })}
-              onSelectClient={this.onClientSelected}
-            />
-          )}
-
           <Modal
             size={'small'}
             show={this.state.pedidoGenerado !== null}
             onOk={this.onConfirmarPedido}
           >
-            <div style={{height: '100%', padding: '1rem'}}>
+            <div style={{ height: '100%', padding: '1rem' }}>
               {`El pedido fue generado exitosamente. El número de pedido es el ${this.state.pedidoGenerado}. ${this.state.pedidoGenerado && selectedTab === 1 && `Puede retirar su pedido por el punto de entrega ${comercio.razon_social}. La direccion es ${comercio.calle} ${comercio.altura}. El telefono es ${comercio.telefono}.`}`}
             </div>
           </Modal>
