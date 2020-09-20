@@ -9,6 +9,21 @@
     margin: 0;
   }
 
+  .FiltrandoPor {
+    top: -17px;
+    font-size: 12px;
+    margin-bottom: 2px;
+    position: absolute;
+    color: $color-greyscale-dark;
+  }
+
+  .Filtro {
+    font-size: 12px;
+    margin-bottom: 2px;
+    color: $color-greyscale-dark;
+    font-family: $font-family-secondary;
+  }
+
   .SearchResults {
     top: 40px;
     width: 550px;

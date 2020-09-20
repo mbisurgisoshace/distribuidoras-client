@@ -4,9 +4,8 @@ import * as styles from './styles.css';
 import * as classnames from 'classnames';
 import { Cliente } from '../../../types';
 import { SearchResultItem } from './SearchResultItem';
-import { useEffect, useMemo, useRef, useState } from 'react';
-import List from 'react-virtualized/dist/commonjs/List';
-import ArrowKeyStepper from 'react-virtualized/dist/commonjs/ArrowKeyStepper';
+import { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
+import { List, ArrowKeyStepper} from 'react-virtualized';
 
 interface ClientsInputSearchProps {
   clientes: Array<Cliente>
@@ -29,8 +28,37 @@ export const ClientsInputSearch = ({ clientes, onSelectClient }: ClientsInputSea
     };
   }, []);
 
+  const filterBy = (search: string, key?: string) => {
+    if (!key) return clientes;
+
+    return clientes.filter(c => c[key] && c[key].toString().toLowerCase().includes(search));
+  }
+
   const searchResults = useMemo(() => {
     if (!searchString) return clientes;
+
+    if (searchString[0] === '-' && searchString[1]) {
+      let filter = searchString[1];
+      if (searchString.length > 3) {
+        let search = searchString.substring(3, searchString.length);
+        if (filter === 'a') {
+          return filterBy(search, 'altura');
+        }
+
+        if (filter === 'c') {
+          return filterBy(search, 'calle');
+        }
+
+        if (filter === 'r') {
+          return filterBy(search, 'razon_social');
+        }
+
+        if (filter === 't') {
+          return filterBy(search, 'telefono');
+        }
+      }
+      return clientes;
+    }
 
     return clientes.filter(c => {
       if (isNaN(parseInt(searchString))) {
@@ -100,8 +128,32 @@ export const ClientsInputSearch = ({ clientes, onSelectClient }: ClientsInputSea
     );
   };
 
+  const getFiltro = (key:string) => {
+    if (key === 'a') {
+      return 'Altura';
+    }
+
+    if (key === 'r') {
+      return 'Razon Social';
+    }
+
+    if (key === 'c') {
+      return 'Calle';
+    }
+
+    if (key === 't') {
+      return 'Telefono';
+    }
+  }
+
   return (
     <div className={styles.ClientsInputSearch} ref={searchContainerRef}>
+      {searchString[0] === '-' && searchString[1] && (
+        <span className={styles.FiltrandoPor}>Filtrando por <span className={styles.Filtro}>{getFiltro(searchString[1])}</span></span>
+      )}
+      {searchString[0] !== '-' && (
+        <span className={styles.FiltrandoPor}>Filtrando por <span className={styles.Filtro}>Todos</span></span>
+      )}
       <Input
         fluid
         size={'small'}
@@ -129,42 +181,20 @@ export const ClientsInputSearch = ({ clientes, onSelectClient }: ClientsInputSea
           rowCount={searchResults.length}
           onScrollToChange={({scrollToRow}) => setCursor(scrollToRow)}
         >
-          {({onSectionRendered, scrollToColumn, scrollToRow}) => {
-            return (
-              <List
-                width={550}
-                height={250}
-                rowHeight={25}
-                ref={searchResultRef}
-                rowRenderer={rowRenderer}
-                scrollToIndex={scrollToRow + 1}
-                rowCount={searchResults.length}
-                scrollToColumn={scrollToColumn}
-                onSectionRendered={onSectionRendered}
-              />
-            )
-          }}
-        {/*<List*/}
-        {/*  width={550}*/}
-        {/*  height={250}*/}
-        {/*  rowHeight={25}*/}
-        {/*  ref={searchResultRef}*/}
-        {/*  rowRenderer={rowRenderer}*/}
-        {/*  rowCount={searchResults.length}*/}
-        {/*/>*/}
+          {({onSectionRendered, scrollToColumn, scrollToRow}) => (
+            <List
+              width={550}
+              height={250}
+              rowHeight={25}
+              ref={searchResultRef}
+              rowRenderer={rowRenderer}
+              scrollToIndex={scrollToRow + 1}
+              rowCount={searchResults.length}
+              scrollToColumn={scrollToColumn}
+              onSectionRendered={onSectionRendered}
+            /> as ReactNode
+          )}
         </ArrowKeyStepper>
-        {/*<ul className={styles.ListGroup} ref={searchResultRef}>*/}
-        {/*  {searchResults.map((c, i) => (*/}
-        {/*    <SearchResultItem*/}
-        {/*      key={c.cliente_id}*/}
-        {/*      isSelected={cursor === i}*/}
-        {/*      cliente={c}*/}
-        {/*      onSelectItem={() => {*/}
-        {/*        setIsVisible(false);*/}
-        {/*        setSearchString(c.razon_social);*/}
-        {/*      }}/>*/}
-        {/*  ))}*/}
-        {/*</ul>*/}
       </div>
     </div>
   );
