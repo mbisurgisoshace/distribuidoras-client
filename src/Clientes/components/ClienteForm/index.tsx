@@ -21,7 +21,8 @@ import {
   ListaPrecio as IListaPrecio,
   CondicionIva as ICondicionIva,
   CondicionVenta as ICondicionVenta,
-  UltimoPedidoView as IUltimoPedidoView
+  UltimoPedidoView as IUltimoPedidoView,
+  UltimoComodatoView as IUltimoComodatoView
 } from '../../../types';
 
 import ZonasService from '../../../services/zonas';
@@ -36,8 +37,9 @@ type IEditable<T> = { [P in keyof T]?: T[P] };
 
 interface ClienteFormProps {
   nuevo?: boolean;
-  cliente?: ICliente
-  ultimoPedido?: IUltimoPedidoView
+  cliente?: ICliente;
+  ultimoPedido?: IUltimoPedidoView;
+  ultimoComodato?: IUltimoComodatoView;
 }
 
 interface ClienteFormState {
@@ -199,7 +201,7 @@ export class ClienteForm extends React.Component<ClienteFormProps, ClienteFormSt
   };
 
   render() {
-    const { nuevo, ultimoPedido } = this.props;
+    const { nuevo, ultimoPedido, ultimoComodato } = this.props;
     const { zonas, canales, subzonas, subcanales, selectedZonaId, listasPrecio, condicionesIva, condicionesVenta, loading } = this.state;
 
     const zonasOptions = zonas.map(z => ({
@@ -285,6 +287,42 @@ export class ClienteForm extends React.Component<ClienteFormProps, ClienteFormSt
                 </div>
               </div>
             )}
+            <div className={styles.ClienteUltimoComodato}>
+              <div className={styles.UltimoComodato}>
+                <div className={styles.UltimoComodatoTitulo}>Ultimo Comodato</div>
+                {ultimoComodato && (
+                  <div className={styles.UltimoComodatoNumero}>
+                    <span>#</span>
+                    <Link to={`/comodatos/${ultimoComodato.comprobante}`} target='_blank'>
+                      {ultimoComodato.comprobante}
+                      <div className={styles.UltimoComodatoResumen}>
+                        <div className={styles.header}>
+                          <div style={{ width: '45px' }}>Cod</div>
+                          <div style={{ width: '150px' }}>Producto</div>
+                          <div style={{ width: '45px' }}>Cant</div>
+                          <div style={{ width: '75px' }}>Monto</div>
+                        </div>
+                        {ultimoComodato.items.map(i => (
+                          <div className={styles.data}>
+                            <div style={{ width: '45px' }}>{i.envase_codigo}</div>
+                            <div style={{ width: '150px' }}>{i.envase_nombre}</div>
+                            <div style={{ width: '45px', textAlign: 'center' }}>{i.cantidad}</div>
+                            <div
+                              style={{ width: '75px', textAlign: 'right' }}>{numeral(i.monto).format('$0,0.00')}</div>
+                          </div>
+                        ))}
+                      </div>
+                    </Link>
+                  </div>
+                )}
+                {ultimoComodato && (
+                  <div
+                    className={styles.UltimoComodatoFecha}>{moment(ultimoComodato.fecha).format('DD/MM/YYYY')}
+                  </div>
+                )}
+              </div>
+            </div>
+
             <div
               className={classnames(styles.ClienteEstado, this.getUpdatedCliente().estado ? styles.activo : styles.inactivo)}>
               {this.getUpdatedCliente().estado ? 'Activo' : 'Inactivo'}

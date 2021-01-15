@@ -2,7 +2,7 @@ import * as React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 
 import * as styles from './styles.css';
-import { Cliente as ICliente, UltimoPedidoView as IUltimoPedidoView } from '../../../types';
+import { Cliente as ICliente, UltimoPedidoView as IUltimoPedidoView, UltimoComodatoView as IUltimoComodatoView } from '../../../types';
 import { RoutedOuterWrapper as OuterWrapper } from '../../../shared/layouts/OuterWrapper';
 import ClientesService from '../../../services/clientes';
 import { ClienteForm } from '../ClienteForm';
@@ -20,6 +20,7 @@ interface ClienteState {
   loading: boolean;
   cliente: ICliente;
   ultimoPedido: IUltimoPedidoView;
+  ultimoComodato: IUltimoComodatoView;
 }
 
 export class Cliente extends React.Component<ClienteProps, ClienteState> {
@@ -28,25 +29,34 @@ export class Cliente extends React.Component<ClienteProps, ClienteState> {
     this.state = {
       loading: true,
       cliente: null,
-      ultimoPedido: null
+      ultimoPedido: null,
+      ultimoComodato: null
     }
   }
 
   async componentDidMount() {
     const cliente = await ClientesService.getCliente(parseInt(this.props.match.params.clienteId));
     let ultimoPedido = null;
+    let ultimoComodato = null;
     if (cliente) {
       try {
         ultimoPedido = await ClientesService.getLastPedidoCliente(parseInt(this.props.match.params.clienteId));
+
       } catch (e) {
         ultimoPedido = null;
       }
+
+      try {
+        ultimoComodato = await ClientesService.getLastComodatoCliente(parseInt(this.props.match.params.clienteId));
+      } catch (e) {
+        ultimoComodato = null;
+      }
     }
-    this.setState({ cliente, ultimoPedido, loading: false });
+    this.setState({ cliente, ultimoPedido, ultimoComodato, loading: false });
   }
 
   render() {
-    const { cliente, ultimoPedido, loading } = this.state;
+    const { cliente, ultimoPedido, ultimoComodato, loading } = this.state;
 
     return (
       <OuterWrapper>
@@ -56,7 +66,7 @@ export class Cliente extends React.Component<ClienteProps, ClienteState> {
           </div>
         )}
         {!loading && (
-          <ClienteForm cliente={cliente} ultimoPedido={ultimoPedido}/>
+          <ClienteForm cliente={cliente} ultimoPedido={ultimoPedido} ultimoComodato={ultimoComodato}/>
         )}
       </OuterWrapper>
     );

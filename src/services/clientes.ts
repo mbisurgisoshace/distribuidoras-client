@@ -1,5 +1,5 @@
 import BaseService from './baseService';
-import { Cliente as ICliente, UltimoPedidoView as IUltimoPedidoView } from '../types';
+import { Cliente as ICliente, UltimoPedidoView as IUltimoPedidoView, UltimoComodatoView as IUltimoComodatoView } from '../types';
 
 export default class ClientesService extends BaseService {
   static clientesRoute = '/clientes';
@@ -7,6 +7,7 @@ export default class ClientesService extends BaseService {
   static clientesCanalRoute = '/clientes/canal/{canal_id}';
   static lastClienteRoute = '/clientes/last';
   static lastPedidoClienteRoute = '/clientes/{cliente_id}/last';
+  static lastComodatoClienteRoute = '/clientes/{cliente_id}/comodato';
 
   public static async getClientes(): Promise<Array<ICliente>> {
     return await this.getRequest<Array<ICliente>>(this.clientesRoute);
@@ -35,5 +36,9 @@ export default class ClientesService extends BaseService {
 
   public static async getLastPedidoCliente(id: number): Promise<IUltimoPedidoView> {
     return await this.getRequest<IUltimoPedidoView>(this.buildRoute(this.lastPedidoClienteRoute, { cliente_id: id }));
+  }
+
+  public static async getLastComodatoCliente(id: number): Promise<IUltimoComodatoView> {
+    return await this.getRequest<IUltimoComodatoView>(this.buildRoute(this.lastComodatoClienteRoute, { cliente_id: id }));
   }
 }

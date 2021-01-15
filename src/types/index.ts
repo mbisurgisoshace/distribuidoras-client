@@ -11,6 +11,7 @@ import { ColumnaStock, MovimientoStock, MovimientoStockItem } from './Stock';
 import { Precio, ListaPrecio } from './Precio';
 import { Carga, CargaItem } from './Carga';
 import { Movimiento, MovimientoItem, UltimoPedidoView } from './Pedido';
+import { UltimoComodatoView } from './Comodato';
 import { CondicionIva } from './CondicionIva';
 import { CondicionVenta } from './CondicionVenta';
 import { Zona, ZonaInput, Subzona } from './Zona';
@@ -43,5 +44,6 @@ export {
   MovimientoItem,
   MovimientoStock,
   UltimoPedidoView,
+  UltimoComodatoView,
   MovimientoStockItem
 };
