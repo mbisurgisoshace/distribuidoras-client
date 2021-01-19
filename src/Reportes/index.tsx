@@ -62,6 +62,13 @@ export class Reportes extends React.Component<any, ReportesState> {
       }))
       //this.exportAsExcelFile(result, 'Recuperados');
     }
+
+    if (name ==='comodatos_movimientos') {
+      const result = await ReportesService.getReporteMovimientosComodato();
+      this.setState(({
+        report: result
+      }))
+    }
   };
 
   exportAsExcelFile = (json, excelFilename) => {
@@ -96,6 +103,7 @@ export class Reportes extends React.Component<any, ReportesState> {
           <div className={styles.ReportesHeader}>
             <ul>
               <li onClick={() => this.onGenerateReport('recuperados')}>Recuperados</li>
+              <li onClick={() => this.onGenerateReport('comodatos_movimientos')}>Movimientos Comodato</li>
             </ul>
             {this.state.report && <Button size='tiny' onClick={this.exportReport}>Exportar</Button>}
           </div>

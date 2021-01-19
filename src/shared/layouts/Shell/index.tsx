@@ -18,6 +18,7 @@ import { NewCliente } from '../../../Clientes/components/NewCliente';
 import { ControlStock } from '../../../Stock/components/ControlStock';
 import { AllClientes } from '../../../Clientes/components/AllClientes';
 import { NewComercio } from '../../../Comercios/components/NewComercio';
+import { NewComodato } from '../../../Comodatos/components/NewComodato';
 import { AllComercios } from '../../../Comercios/components/AllComercios';
 import { ComercioStock } from '../../../Comercios/components/ComercioStock';
 import { MonitorEntregas } from '../../../Comercios/components/MonitorEntregas';
@@ -38,6 +39,7 @@ const AuthenticatedRoutes = enhanceWithHeader(() => (
     <AuthenticatedRoute path="/comercios/stock/new" exact component={ComercioStock}/>
     <AuthenticatedRoute path="/comercios/:comercioId(\d+)" exact component={Comercio}/>
     <AuthenticatedRoute path="/pedidos/new" exact component={NewPedido}/>
+    <AuthenticatedRoute path="/comodatos/new" exact component={NewComodato}/>
     <AuthenticatedRoute path="/stock" exact component={AllClientes}/>
     <AuthenticatedRoute path="/stock/cierre" exact component={ControlStock}/>
     <AuthenticatedRoute path="/stock/control" exact component={ControlStock}/>

@@ -11,7 +11,7 @@ import { ColumnaStock, MovimientoStock, MovimientoStockItem } from './Stock';
 import { Precio, ListaPrecio } from './Precio';
 import { Carga, CargaItem } from './Carga';
 import { Movimiento, MovimientoItem, UltimoPedidoView } from './Pedido';
-import { UltimoComodatoView } from './Comodato';
+import { Comodato, ComodatoItem, UltimoComodatoView } from './Comodato';
 import { CondicionIva } from './CondicionIva';
 import { CondicionVenta } from './CondicionVenta';
 import { Zona, ZonaInput, Subzona } from './Zona';
@@ -31,6 +31,7 @@ export {
   Cliente,
   Subzona,
   Polygon,
+  Comodato,
   Comercio,
   Subcanal,
   CargaItem,
@@ -40,6 +41,7 @@ export {
   ListaPrecio,
   ColumnaStock,
   CondicionIva,
+  ComodatoItem,
   CondicionVenta,
   MovimientoItem,
   MovimientoStock,
