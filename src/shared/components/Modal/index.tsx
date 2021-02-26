@@ -129,8 +129,9 @@ export class Modal extends React.Component<ModalProps, {}> {
 
   cancelButton = this.props.showCancel ? (
     <Button
-      type="secondary"
+      type="primary"
       size="tiny"
+      outline
       onClick={this.onCancelClick.bind(this)}
       className={styles.CancelBtn}
     >

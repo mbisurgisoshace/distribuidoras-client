@@ -28,11 +28,13 @@ import { ClientsInputSearch } from '../../../shared/components/ClientsInputSearc
 import ClientesService from '../../../services/clientes';
 import ComodatosService from '../../../services/comodatos';
 import { Redirect } from 'react-router-dom';
+import { Checkbox } from '../../../shared/components/Checkbox';
 
 type IEditable<T> = { [P in keyof T]?: T[P] };
 
 interface PedidoFormState {
   loading: boolean;
+  showModal: boolean;
   controlError: string;
   isAddingItem: boolean;
   editarCliente: boolean;
@@ -57,6 +59,7 @@ export class ComodatoForm extends React.Component<any, PedidoFormState> {
       clientes: [],
       cliente: null,
       loading: true,
+      showModal: false,
       editableItem: {},
       controlError: '',
       isAddingItem: false,
@@ -140,7 +143,8 @@ export class ComodatoForm extends React.Component<any, PedidoFormState> {
       comodatoVigente,
       editableComodato: {
         ...comodato
-      }
+      },
+      showModal: !cliente.presento_documento || !cliente.presento_impuesto
     });
   };
 
@@ -190,6 +194,17 @@ export class ComodatoForm extends React.Component<any, PedidoFormState> {
       });
     }
   };
+
+  onCheckboxFieldChange = (e) => {
+    const { cliente = {} } = this.state;
+
+    this.setState({
+      cliente: {
+        ...cliente,
+        [e.target.name]: e.target.checked
+      }
+    });
+  }
 
   onItemFieldChange = (e, index = null) => {
     let { editableItem = {}, editableComodato } = this.state;
@@ -289,9 +304,20 @@ export class ComodatoForm extends React.Component<any, PedidoFormState> {
     };
   };
 
+  submitClientUpdate = async () => {
+    const cliente = this.getUpdatedCliente();
+
+    const updatedCliente = await ClientesService.updateCliente(cliente, cliente.cliente_id);
+
+    this.setState({
+      showModal: false,
+      cliente: {...updatedCliente},
+    })
+  }
+
   render() {
     const { nuevo } = this.props;
-    const { cliente, envases, clientes, choferes, loading, isAddingItem, pedidoConfirmado, comodatoCreated } = this.state;
+    const { cliente, envases, clientes, showModal, choferes, loading, isAddingItem, pedidoConfirmado, comodatoCreated } = this.state;
 
     const envasesOptions = envases.map(e => ({
       value: e.envase_id,
@@ -456,6 +482,21 @@ export class ComodatoForm extends React.Component<any, PedidoFormState> {
             </div>
           </div>
         </div>
+        <Modal
+          size={'small'}
+          show={showModal}
+          showCancel={true}
+          onCancel={() => this.setState({showModal: false})}
+          onOk={this.submitClientUpdate}
+          headerText={'Documentacion presentada'}
+        >
+          <div
+            style={{display: 'flex', flexDirection: 'column', height: '100%', padding: '16px'}}
+          >
+            <Checkbox checked={this.getUpdatedCliente().presento_documento} name={'presento_documento'} onChange={this.onCheckboxFieldChange}>Presento DNI</Checkbox>
+            <Checkbox checked={this.getUpdatedCliente().presento_impuesto} name={'presento_impuesto'} onChange={this.onCheckboxFieldChange}>Presento Impuesto</Checkbox>
+          </div>
+        </Modal>
       </div>
     );
   }
