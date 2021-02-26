@@ -32,6 +32,7 @@ import ClientesService from '../../../services/clientes';
 import SubzonasService from '../../../services/subzonas';
 import CondicionesIvaService from '../../../services/condicionesIva';
 import CondicionesVentaService from '../../../services/condicionesVenta';
+import { Checkbox } from '../../../shared/components/Checkbox';
 
 type IEditable<T> = { [P in keyof T]?: T[P] };
 
@@ -149,6 +150,17 @@ export class ClienteForm extends React.Component<ClienteFormProps, ClienteFormSt
       }
     });
   };
+
+  onCheckboxFieldChange = (e) => {
+    const { editableCliente = {} } = this.state;
+
+    this.setState({
+      editableCliente: {
+        ...editableCliente,
+        [e.target.name]: e.target.checked
+      }
+    });
+  }
 
   onZonaChange = (e) => {
     const selectedZonaId = e.target.value;
@@ -398,6 +410,9 @@ export class ClienteForm extends React.Component<ClienteFormProps, ClienteFormSt
               <Select size='small' label='Lista de Precio' name='lista_precio_id' placeholder='Seleccionar...'
                       value={this.getUpdatedCliente().lista_precio_id}
                       options={listasPrecioOptions} onChange={this.onFieldChange}/>
+
+              <Checkbox checked={this.getUpdatedCliente().presento_documento} name={'presento_documento'} onChange={this.onCheckboxFieldChange}>Presento DNI</Checkbox>
+              <Checkbox checked={this.getUpdatedCliente().presento_impuesto} name={'presento_impuesto'} onChange={this.onCheckboxFieldChange}>Presento Impuesto</Checkbox>
 
               <Button size='small' outline onClick={this.onSubmit}>
                 Guardar

@@ -23,4 +23,6 @@ export interface Cliente {
   lista_precio_id?: number;
   fecha_ultima_compra?: string;
   estado?: number;
+  presento_documento?: boolean;
+  presento_impuesto?: boolean;
 }
