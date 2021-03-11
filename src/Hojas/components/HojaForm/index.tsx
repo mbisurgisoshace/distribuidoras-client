@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { flatten } from 'lodash';
 import * as moment from 'moment';
 import * as numeral from 'numeral';
 import * as classnames from 'classnames';
@@ -6,7 +7,7 @@ import { Link, Redirect } from 'react-router-dom';
 
 import * as styles from './styles.css';
 
-import { checkHoja, calculateGastos, calculateRendicion, calculateCondicionesPago } from './utils';
+import { checkHoja, calculateGastos, calculateRendicion, calculateCondicionesPago, hasComodatos } from './utils';
 
 import { Input } from '../../../shared/components/Input';
 import { Button } from '../../../shared/components/Button';
@@ -18,6 +19,7 @@ import {
   Zona as IZona,
   Chofer as IChofer,
   Camion as ICamion,
+  CargaItem as ICarga,
   Movimiento as IMovimiento,
   CondicionVenta as ICondicionVenta
 } from '../../../types';
@@ -29,6 +31,8 @@ import MovimientosService from '../../../services/movimientos';
 import { Modal } from '../../../shared/components/Modal';
 import CondicionesVentaService from '../../../services/condicionesVenta';
 import HojasService from '../../../services/hojas';
+import { Checkbox } from '../../../shared/components/Checkbox';
+import CargasService from '../../../services/cargas';
 
 type IEditable<T> = { [P in keyof T]?: T[P] };
 
@@ -39,6 +43,7 @@ interface HojaFormProps {
 
 interface HojaFormState {
   zonas: Array<IZona>;
+  cargas: Array<ICarga>;
   choferes: Array<IChofer>;
   camiones: Array<ICamion>;
   editableHoja: IEditable<IHoja>;
@@ -49,8 +54,10 @@ interface HojaFormState {
   checks: {
     checkStock: boolean,
     checkPedidos: boolean,
-    checkRendicion: boolean
-  }
+    checkRendicion: boolean,
+    checkComodatos: boolean
+  },
+  entregaComodatos: boolean;
 }
 
 export class HojaForm extends React.Component<HojaFormProps, HojaFormState> {
@@ -59,6 +66,7 @@ export class HojaForm extends React.Component<HojaFormProps, HojaFormState> {
 
     this.state = {
       zonas: [],
+      cargas: [],
       camiones: [],
       choferes: [],
       movimientos: [],
@@ -69,8 +77,10 @@ export class HojaForm extends React.Component<HojaFormProps, HojaFormState> {
       checks: {
         checkStock: true,
         checkPedidos: true,
-        checkRendicion: true
-      }
+        checkRendicion: true,
+        checkComodatos: true
+      },
+      entregaComodatos: false
     };
   }
 
@@ -79,7 +89,9 @@ export class HojaForm extends React.Component<HojaFormProps, HojaFormState> {
     const choferes = await ChoferesService.getChoferes();
     const camiones = await CamionesService.getCamiones();
     const condiciones = await CondicionesVentaService.getCondicionesVenta();
+    const cargas = await CargasService.getCargasByHoja(this.props.hoja.hoja_ruta_id)
     const movimientos = await MovimientosService.getMovimientosByHoja(this.props.hoja.hoja_ruta_id);
+    const items = flatten(cargas.map(c => c.items));
 
     this.setState({
       zonas,
@@ -87,6 +99,7 @@ export class HojaForm extends React.Component<HojaFormProps, HojaFormState> {
       camiones,
       condiciones,
       movimientos,
+      cargas: items,
       loading: false
     });
   }
@@ -191,21 +204,28 @@ export class HojaForm extends React.Component<HojaFormProps, HojaFormState> {
       }
     }
 
-    const updatedHoja = await HojasService.updateHoja(hoja.hoja_ruta_id, hoja);
+    const checkComodato = (hasComodatos(this.state.cargas) && this.state.entregaComodatos) || (!hasComodatos(this.state.cargas) && !this.state.entregaComodatos);
 
-    this.setState({
-      checks: {
-        checkStock: true,
-        checkPedidos: true,
-        checkRendicion: true
-      },
-      loading: false,
-      editableHoja: { ...updatedHoja }
-    });
+    if (checkComodato) {
+      const updatedHoja = await HojasService.updateHoja(hoja.hoja_ruta_id, hoja);
+
+      this.setState({
+        checks: {
+          checkStock: true,
+          checkPedidos: true,
+          checkRendicion: true,
+          checkComodatos: true
+        },
+        loading: false,
+        editableHoja: { ...updatedHoja }
+      });
+    } else {
+      this.setState({ checks: {...this.state.checks, checkComodatos: false}, loading: false });
+    }
   };
 
   render() {
-    const { zonas, choferes, camiones, showDetalle, loading, movimientos } = this.state;
+    const { zonas, choferes, camiones, showDetalle, loading, movimientos, entregaComodatos } = this.state;
 
     const zonasOptions = zonas.map(z => ({
       label: z.zona_nombre,
@@ -243,6 +263,7 @@ export class HojaForm extends React.Component<HojaFormProps, HojaFormState> {
             <Select size='small' label='Camion' name='camion_id' placeholder='Seleccionar...'
                     value={this.getUpdatedHoja().camion_id}
                     options={camionesOptions} onChange={this.onFieldChange}/>
+            <Checkbox checked={entregaComodatos} name={'comodatos'} onChange={() => this.setState({entregaComodatos: !entregaComodatos})}>Entrega Comodatos</Checkbox>
             <div className={styles.EstadosWrapper}>
               <div
                 className={classnames(styles.HojaEstado, this.getEstadoStock().style)}>
@@ -349,6 +370,7 @@ export class HojaForm extends React.Component<HojaFormProps, HojaFormState> {
                   {!this.state.checks.checkStock && <p className={styles.ControlText}>Realizar control de stock</p>}
                   {!this.state.checks.checkPedidos && <p className={styles.ControlText}>Controlar que los preruteos no entregados tengan motivo asignado</p>}
                   {!this.state.checks.checkRendicion && <p className={styles.ControlText}>Controlar que el efectivo rendido coincida con la suma de efectivo y cheques</p>}
+                  {!this.state.checks.checkComodatos && <p className={styles.ControlText}>El chofer tiene comodatos que tiene que presentar</p>}
                 </div>
               </div>
             </div>

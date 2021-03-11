@@ -102,6 +102,7 @@ export class Sidebar extends React.Component<SidebarProps, SidebarState> {
 										{ href: '/stock/control', title: 'Control', subgroup: 'control' },
 										{ href: '/stock/cierre', title: 'Cierre', subgroup: 'cierre' },
 										{ href: '/comodatos/new', title: 'Comodatos', subgroup: 'comodatos' },
+										{ href: '/comodatos/gestion', title: 'Gestion Comodatos', subgroup: 'gestion-comodatos' },
 										{ href: '/comercios/stock/new', title: 'Stock P.E', subgroup: 'stock-pe' }
 									]}
 									title="Stock"

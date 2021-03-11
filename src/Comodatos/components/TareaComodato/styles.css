@@ -1,0 +1,89 @@
+.TareaComodatoForm {
+  width: 100%;
+  padding: 2rem;
+  background-color: $color-greyscale-lightest;
+}
+
+.FormWrapper {
+  display: flex;
+  padding: 10px;
+  background-color: $color-white;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.16);
+  border-radius: 5px;
+  flex-wrap: wrap;
+  width: 1440px;
+  box-sizing: border-box;
+  margin: 0 auto;
+  position: relative;
+}
+
+.ComodatoInfo {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+
+  .ComodatoInfoLeft {
+    width: 100%;
+    padding: 5px;
+    border-right: 1px solid $color-greyscale-light;
+    box-sizing: border-box;
+
+    .DetalleWrapper {
+      width: 100%;
+      min-height: 400px;
+
+      .DetalleWrapperHeader {
+        display: flex;
+        align-items: center;
+        margin-bottom: 0.5rem;
+
+        h3 {
+          margin: 0;
+          font-size: 1rem;
+          color: $color-greyscale-darker;
+          font-family: $font-family-secondary;
+        }
+
+        :not(:last-child) {
+          margin-right: 1rem;
+        }
+      }
+
+      .row.ItemWrapper {
+        display: flex;
+        padding: 0.5rem;
+        align-items: center;
+
+        svg {
+          width: 15px;
+          height: 15px;
+        }
+      }
+
+      .row {
+        :not(:last-child) {
+          margin-right: 10px;
+        }
+      }
+    }
+  }
+
+  .ComodatoInfoRight {
+    display: flex;
+    flex-direction: column;
+    width: 20%;
+    padding: 5px;
+    box-sizing: border-box;
+
+    .ControlText {
+      color: #eb4d4b;
+      font-size: 0.75rem;
+      font-family: $font-family-secondary;
+    }
+
+    button {
+      margin-left: auto;
+      margin-top: auto;
+    }
+  }
+}

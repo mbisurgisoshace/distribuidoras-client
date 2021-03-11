@@ -1,5 +1,6 @@
 import {
   Hoja as IHoja,
+  CargaItem as ICargaItem,
   Movimiento as IMovimiento
 } from '../../../types';
 
@@ -14,7 +15,7 @@ export const calculateGastos = (hoja: IHoja) => {
 export const calculateRendicion = (hoja: IHoja, movimientos: Array<IMovimiento>) => {
   const gastos = calculateGastos(hoja);
   const cobranzas = parseFloat(hoja.cobranza as any) || 0;
-  
+
   return calculateCondicionesPago('contado', movimientos) + cobranzas - gastos;
 };
 
@@ -41,6 +42,7 @@ export const calculateCondicionesPago = (condicion: string, movimientos: Array<I
 export const checkHoja = (hoja: IHoja, movimientos: Array<IMovimiento>) => {
   let checkStock = true;
   let checkRendicion = true;
+  let checkComodatos = true;
 
   if (!hoja.control_stock) {
     checkStock = false;
@@ -55,7 +57,8 @@ export const checkHoja = (hoja: IHoja, movimientos: Array<IMovimiento>) => {
   return {
     checkStock,
     checkPedidos,
-    checkRendicion
+    checkRendicion,
+    checkComodatos
   }
 };
 
@@ -63,11 +66,19 @@ export const checkPreruteos = (preruteos: Array<IMovimiento>): boolean => {
   let check = true;
 
   preruteos.forEach(m => {
-    console.log('m', m);
     if (m.estado_movimiento_id !== 3 && m.motivo_id === null) {
       check = false;
     }
   });
-  console.log('check', check);
   return check;
 };
+
+export const hasComodatos = (cargas: Array<ICargaItem>): boolean => {
+  let check = false;
+
+  cargas.forEach(c => {
+    if (c.entrega > 0) check = true;
+  })
+
+  return check;
+}

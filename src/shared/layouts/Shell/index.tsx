@@ -22,6 +22,7 @@ import { NewComodato } from '../../../Comodatos/components/NewComodato';
 import { AllComercios } from '../../../Comercios/components/AllComercios';
 import { ComercioStock } from '../../../Comercios/components/ComercioStock';
 import { MonitorEntregas } from '../../../Comercios/components/MonitorEntregas';
+import { TareaComodato } from '../../../Comodatos/components/TareaComodato';
 
 const AuthenticatedRoutes = enhanceWithHeader(() => (
   <React.Fragment>
@@ -40,6 +41,7 @@ const AuthenticatedRoutes = enhanceWithHeader(() => (
     <AuthenticatedRoute path="/comercios/:comercioId(\d+)" exact component={Comercio}/>
     <AuthenticatedRoute path="/pedidos/new" exact component={NewPedido}/>
     <AuthenticatedRoute path="/comodatos/new" exact component={NewComodato}/>
+    <AuthenticatedRoute path="/comodatos/gestion" exact component={TareaComodato}/>
     <AuthenticatedRoute path="/stock" exact component={AllClientes}/>
     <AuthenticatedRoute path="/stock/cierre" exact component={ControlStock}/>
     <AuthenticatedRoute path="/stock/control" exact component={ControlStock}/>
