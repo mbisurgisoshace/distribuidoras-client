@@ -40,7 +40,7 @@ interface ClienteFormProps {
   nuevo?: boolean;
   cliente?: ICliente;
   ultimoPedido?: IUltimoPedidoView;
-  ultimoComodato?: IUltimoComodatoView;
+  ultimoComodato?: any;
 }
 
 interface ClienteFormState {
@@ -305,31 +305,26 @@ export class ClienteForm extends React.Component<ClienteFormProps, ClienteFormSt
                 {ultimoComodato && (
                   <div className={styles.UltimoComodatoNumero}>
                     <span>#</span>
-                    <Link to={`/comodatos/${ultimoComodato.comprobante}`} target='_blank'>
-                      {ultimoComodato.comprobante}
+                    <Link to={''} target='_blank'>
+                      {'Detalle'}
                       <div className={styles.UltimoComodatoResumen}>
                         <div className={styles.header}>
                           <div style={{ width: '45px' }}>Cod</div>
                           <div style={{ width: '150px' }}>Producto</div>
                           <div style={{ width: '45px' }}>Cant</div>
-                          <div style={{ width: '75px' }}>Monto</div>
+                          {/*<div style={{ width: '75px' }}>Monto</div>*/}
                         </div>
-                        {ultimoComodato.items.map(i => (
+                        {ultimoComodato.map(i => (
                           <div className={styles.data}>
                             <div style={{ width: '45px' }}>{i.envase_codigo}</div>
                             <div style={{ width: '150px' }}>{i.envase_nombre}</div>
                             <div style={{ width: '45px', textAlign: 'center' }}>{i.cantidad}</div>
-                            <div
-                              style={{ width: '75px', textAlign: 'right' }}>{numeral(i.monto).format('$0,0.00')}</div>
+                            {/*<div*/}
+                            {/*  style={{ width: '75px', textAlign: 'right' }}>{numeral(i.monto).format('$0,0.00')}</div>*/}
                           </div>
                         ))}
                       </div>
                     </Link>
-                  </div>
-                )}
-                {ultimoComodato && (
-                  <div
-                    className={styles.UltimoComodatoFecha}>{moment(ultimoComodato.fecha).format('DD/MM/YYYY')}
                   </div>
                 )}
               </div>

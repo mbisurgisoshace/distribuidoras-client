@@ -1,3 +1,5 @@
+type TipoComodato = 'comodato' | 'retiro';
+
 export interface Comodato {
   comodato_enc_id?: number;
   fecha: string;
@@ -11,7 +13,8 @@ export interface Comodato {
   observaciones?: string;
   chofer_id?: number;
   monto: number;
-  items?: Array<ComodatoItem>
+  items?: Array<ComodatoItem>;
+  tipo: TipoComodato;
 }
 
 export interface ComodatoItem {
@@ -23,12 +26,8 @@ export interface ComodatoItem {
 }
 
 export interface UltimoComodatoView {
-  fecha: string;
-  comprobante: string;
-  items: [{
-    envase_codigo: string;
-    envase_nombre: string;
-    cantidad: number;
-    monto: number;
-  }]
+  envase_codigo: string;
+  envase_nombre: string;
+  cantidad: number;
+  monto: number;
 }

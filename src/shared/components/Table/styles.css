@@ -1,38 +1,95 @@
-@import 'colors';
+.TableContainer {
+  padding: 16px;
+  margin: 0 auto;
+}
 
-.Table {
+table {
+  font-size: 12px;
+  border-spacing: 0;
+}
+
+table tr {
+  height: 25px;
+}
+
+table thead tr {
+  height: 35px;
+  text-align: left;
+}
+
+table tbody tr {
+}
+
+table th {
+  padding: 0 15px;
+}
+
+table th, table td {
+  box-sizing: border-box;
+  border-left: 1px solid #DDE9FB;
+  border-bottom: 1px solid #DDE9FB;
+}
+
+table th:last-child, table td:last-child {
+  border-right: 1px solid #DDE9FB;
+}
+
+table tr:first-child th {
+  border-top: 1px solid #DDE9FB;
+}
+
+table tr:first-child th:first-child {
+  border-top-left-radius: 5px;
+}
+
+table tr:first-child th:last-child {
+  border-top-right-radius: 5px;
+}
+
+table tr:last-child td:first-child {
+  border-bottom-left-radius: 5px;
+}
+
+table tr:last-child td:first-child .react-select__control {
+  border-bottom-left-radius: 5px !important;
+}
+
+table tr:last-child td:last-child {
+  border-bottom-right-radius: 5px;
+}
+
+.react-select-container {
+  height: 25px;
+}
+
+.react-select__control {
+  height: 25px !important;
+  min-height: 25px!important;
+  border-radius: 0 !important;
+  border-style: none !important;
+}
+
+.react-select__indicators {
+  height: 25px !important;
+}
+
+.react-select__indicator-separator {
+  width: 0px !important;
+}
+
+.Input {
+  margin: 0;
   width: 100%;
+  border: none;
+  height: 25px;
+  font-size: 12px;
+  padding: 0 10px;
+  font-family: 'Mulish';
+  box-sizing: border-box;
 }
 
-:global .ReactTable {
-  width: 100%;
-}
-
-:global .rt-tr-group:hover {
-  color: $color-white;
-  background-color: $color-primary-light;
-  cursor: pointer;
-}
-
-:global .rt-thead {
-  color: $color-white;
-  background-color: $color-primary;
-}
-
-:global .pagination-bottom {
-  color: $color-white;
-  background-color: $color-primary;
-
-  :global .-btn {
-    color: $color-white !important;
-  }
-}
-
-:global .rt-td {
-  a, a:active, a:hover, a:visited {
-    width: 100%;
-    text-decoration: none;
-    display: inline-block;
-    color: inherit;
-  }
+.Input:focus {
+  outline-width: 1px;
+  outline-style: solid;
+  outline-color: #2684ff;
 }

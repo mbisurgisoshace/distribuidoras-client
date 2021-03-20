@@ -13,6 +13,7 @@ import { AllHojas } from '../../../Hojas/components/AllHojas';
 import { Cliente } from '../../../Clientes/components/Cliente';
 import { NewPedido } from '../../../Pedidos/components/NewPedido';
 import { Comercio } from '../../../Comercios/components/Comercio';
+import { NewRetiro } from '../../../Comodatos/components/NewRetiro';
 import { DefinirZona } from '../../../Zonas/components/DefinirZona';
 import { NewCliente } from '../../../Clientes/components/NewCliente';
 import { ControlStock } from '../../../Stock/components/ControlStock';
@@ -41,6 +42,7 @@ const AuthenticatedRoutes = enhanceWithHeader(() => (
     <AuthenticatedRoute path="/comercios/:comercioId(\d+)" exact component={Comercio}/>
     <AuthenticatedRoute path="/pedidos/new" exact component={NewPedido}/>
     <AuthenticatedRoute path="/comodatos/new" exact component={NewComodato}/>
+    <AuthenticatedRoute path="/comodatos/retiro" exact component={NewRetiro}/>
     <AuthenticatedRoute path="/comodatos/gestion" exact component={TareaComodato}/>
     <AuthenticatedRoute path="/stock" exact component={AllClientes}/>
     <AuthenticatedRoute path="/stock/cierre" exact component={ControlStock}/>

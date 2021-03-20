@@ -239,7 +239,7 @@
     &.focused{
         & > .inputElement{
             outline: none;
-            box-shadow: 0 0 0 3px $color-primary-light;
+            box-shadow: 0 0 0 1px $color-primary-light;
             border-color: $color-primary;
         }
 

@@ -101,8 +101,6 @@ export class Sidebar extends React.Component<SidebarProps, SidebarState> {
 									menuitems={[
 										{ href: '/stock/control', title: 'Control', subgroup: 'control' },
 										{ href: '/stock/cierre', title: 'Cierre', subgroup: 'cierre' },
-										{ href: '/comodatos/new', title: 'Comodatos', subgroup: 'comodatos' },
-										{ href: '/comodatos/gestion', title: 'Gestion Comodatos', subgroup: 'gestion-comodatos' },
 										{ href: '/comercios/stock/new', title: 'Stock P.E', subgroup: 'stock-pe' }
 									]}
 									title="Stock"
@@ -112,24 +110,26 @@ export class Sidebar extends React.Component<SidebarProps, SidebarState> {
 								/>
 							</SidebarGroup>
 
-							{/*<SidebarGroup*/}
-							{/*	name="Comodatos"*/}
-							{/*	icon="garrafa"*/}
-							{/*	expanded={expanded}*/}
-							{/*	group="/comodatos"*/}
-							{/*	match={match}*/}
-							{/*>*/}
-							{/*	<SidebarMenu*/}
-							{/*		menuitems={[*/}
-							{/*			{ href: '/info', title: 'Generar', subgroup: 'generar' },*/}
-							{/*			{ href: '/appraiser', title: 'Renovar', subgroup: 'renovar' }*/}
-							{/*		]}*/}
-							{/*		title="Comodatos"*/}
-							{/*		group="/comodatos"*/}
-							{/*		match={match}*/}
-							{/*		expanded={expanded}*/}
-							{/*	/>*/}
-							{/*</SidebarGroup>*/}
+							<SidebarGroup
+								name="Comodatos"
+								icon="box-open-solid"
+								expanded={expanded}
+								group="/comodatos"
+								match={match}
+							>
+								<SidebarMenu
+									menuitems={[
+										{ href: '/comodatos/new', title: 'Comodatos', subgroup: 'comodatos' },
+										{ href: '/comodatos/retiro', title: 'Retiros', subgroup: 'retiros' },
+										{ href: '/comodatos/renovacion', title: 'Renovacion', subgroup: 'renovacion' },
+										{ href: '/comodatos/gestion', title: 'Gestion Comodatos', subgroup: 'gestion-comodatos' },
+									]}
+									title="Comodatos"
+									group="/comodatos"
+									match={match}
+									expanded={expanded}
+								/>
+							</SidebarGroup>
 						</div>
 						{/*<svg*/}
 						{/*	className={classnames(styles.SidebarIcon, styles.SidebarChevron)}*/}

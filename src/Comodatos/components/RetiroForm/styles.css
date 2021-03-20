@@ -1,0 +1,222 @@
+@import 'fonts';
+@import 'colors';
+
+.ComodatoForm {
+  width: 100%;
+  padding: 2rem;
+  background-color: $color-greyscale-lightest;
+}
+
+.FormWrapper {
+  display: flex;
+  padding: 10px;
+  background-color: $color-white;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.16);
+  border-radius: 5px;
+  flex-wrap: wrap;
+  width: 1440px;
+  box-sizing: border-box;
+  margin: 0 auto;
+  position: relative;
+}
+
+.ComodatoSummary {
+  display: flex;
+  flex-direction: column;
+  width: 200px;
+  padding: 5px;
+  box-sizing: border-box;
+
+  .ComodatoId {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $color-greyscale-darker;
+    font-size: 2rem;
+
+    span {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: $color-primary;
+      margin-right: 5px;
+    }
+  }
+}
+
+.ComodatoInfo {
+  width: calc(100% - 200px);
+  display: flex;
+  flex-direction: row;
+
+  .ComodatoInfoLeft {
+    width: 80%;
+    padding: 5px;
+    border-right: 1px solid $color-greyscale-light;
+    box-sizing: border-box;
+
+    .ClienteWrapper {
+      width: 100%;
+      margin: 1rem 0;
+
+      .ClienteWrapperHeader {
+        display: flex;
+        align-items: center;
+        margin-bottom: 0.5rem;
+
+        h3 {
+          margin: 0;
+          font-size: 0.95rem;
+          color: $color-greyscale-darker;
+          font-family: $font-family-secondary;
+        }
+
+        :not(:last-child) {
+          margin-right: 1rem;
+        }
+      }
+
+      .ClienteDetailsFieldWrapper {
+        display: flex;
+        flex-direction: row;
+        margin-bottom: 10px;
+      }
+
+      .ClienteDetailsField {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        color: $color-greyscale-dark;
+
+        span {
+          font-size: 14px;
+          margin-right: 0.5rem;
+          font-family: $font-family-secondary;
+        }
+
+        p {
+          margin: 0;
+          font-size: 16px;
+          font-family: $font-family-primary;
+        }
+
+        &:not(:last-child) {
+          margin-right: 5px;
+        }
+      }
+    }
+
+    .DetalleWrapper {
+      width: 100%;
+      min-height: 300px;
+
+      .DetalleWrapperHeader {
+        display: flex;
+        align-items: center;
+        margin-bottom: 0.5rem;
+
+        h3 {
+          margin: 0;
+          font-size: 1rem;
+          color: $color-greyscale-darker;
+          font-family: $font-family-secondary;
+        }
+
+        :not(:last-child) {
+          margin-right: 1rem;
+        }
+      }
+
+      .row.ItemWrapper {
+        display: flex;
+        padding: 0.5rem;
+        align-items: center;
+
+        svg {
+          width: 15px;
+          height: 15px;
+        }
+      }
+
+      .row {
+        :not(:last-child) {
+          margin-right: 10px;
+        }
+      }
+    }
+  }
+
+  .ComodatoInfoRight {
+    display: flex;
+    flex-direction: column;
+    width: 20%;
+    padding: 5px;
+    box-sizing: border-box;
+
+    .ControlText {
+      color: #eb4d4b;
+      font-size: 0.75rem;
+      font-family: $font-family-secondary;
+    }
+
+    button {
+      margin-left: auto;
+      margin-top: auto;
+    }
+  }
+}
+
+.Icons {
+  width: 20px;
+  height: 20px;
+  fill: $color-primary;
+
+  &:hover {
+    cursor: pointer;
+  }
+}
+
+.ItemSelectContainer {
+  padding-top: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+.ItemInputContainer {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+
+  &.margin {
+    margin-left: 10px;
+  }
+}
+
+.newItem {
+  border-radius: 10px;
+  background-color: rgba(106, 176, 76, 0.5);
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+}
+
+:global(.saleMapMarker) {
+  border: 1px solid #000;
+  background-color: $color-primary;
+  border-radius: 50px;
+  height: 15px !important;
+  width: 15px !important;
+  margin-left: -9.5px !important;
+  margin-top: -9.5px !important;
+  box-shadow: rgba(0, 0, 0, 0.7) 2px 2px 5px;
+}
+
+:global(.comercioMapMarker) {
+  border: 1px solid #000;
+  background-color: $color-primary-light;
+  border-radius: 50px;
+  height: 15px !important;
+  width: 15px !important;
+  margin-left: -9.5px !important;
+  margin-top: -9.5px !important;
+  box-shadow: rgba(0, 0, 0, 0.7) 2px 2px 5px;
+}

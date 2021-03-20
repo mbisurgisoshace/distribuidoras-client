@@ -49,7 +49,7 @@ interface PedidoFormState {
   editableComodato: IEditable<IComodato>;
 }
 
-export class ComodatoForm extends React.Component<any, PedidoFormState> {
+export class RetiroForm extends React.Component<any, PedidoFormState> {
   constructor(props) {
     super(props);
 
@@ -100,7 +100,7 @@ export class ComodatoForm extends React.Component<any, PedidoFormState> {
     }
   };
 
-  createNewComodato = (cliente_id): IComodato => {
+  createNewRetiro = (cliente_id): IComodato => {
     return {
       items: [],
       cliente_id,
@@ -111,40 +111,20 @@ export class ComodatoForm extends React.Component<any, PedidoFormState> {
       renovado: false,
       nro_comprobante: '',
       monto: 0,
-      tipo: 'comodato'
+      tipo: 'retiro'
     }
   };
 
   onClientSelected = async (cliente) => {
-    let comodato: IComodato;
-    //const comodatoVigente = await ComodatosService.getComodatoVigenteByCliente(cliente.cliente_id);
+    let retiro: IComodato;
 
-    // if (comodatoVigente) {
-    //   comodato = {
-    //     cliente_id: comodatoVigente.cliente_id,
-    //     items: comodatoVigente.items.map(i => ({
-    //       cantidad: i.cantidad,
-    //       monto: i.monto,
-    //       envase_id: i.envase_id
-    //     })),
-    //     fecha: moment().format('DD-MM-YYYY'),
-    //     fecha_vencimiento: moment().add(1, 'year').format('DD-MM-YYYY'),
-    //     fecha_renovacion: moment().add(1, 'year').subtract(1, 'month').format('DD-MM-YYYY'),
-    //     vigente: true,
-    //     renovado: false,
-    //     nro_comprobante: '',
-    //     monto: comodatoVigente.monto
-    //   };
-    // } else {
-    //   comodato = this.createNewComodato(cliente.cliente_id);
-    // }
-    comodato = this.createNewComodato(cliente.cliente_id);
+    retiro = this.createNewRetiro(cliente.cliente_id);
 
     this.setState({
       cliente,
       //comodatoVigente,
       editableComodato: {
-        ...comodato
+        ...retiro
       },
       showModal: !cliente.presento_documento || !cliente.presento_impuesto
     });
@@ -278,31 +258,16 @@ export class ComodatoForm extends React.Component<any, PedidoFormState> {
       tipo: editableComodato.tipo
     };
 
-    // if (comodatoVigente) {
-    //   enc.items = editableComodato.items;
-    //   await ComodatosService.renovarComodato(comodatoVigente.comodato_enc_id, enc);
-    // } else {
-    //   const newComodato = await ComodatosService.createComodato(enc);
-    //
-    //   const det: Array<IItem> = editableComodato.items.map(i => ({
-    //     comodato_enc_id: newComodato.comodato_enc_id,
-    //     envase_id: i.envase_id,
-    //     cantidad: i.cantidad,
-    //     monto: i.cantidad * i.monto
-    //   }));
-    //
-    //   await ComodatosService.createComodatoItems(newComodato.comodato_enc_id, det);
-    // }
-    const newComodato = await ComodatosService.createComodato(enc);
+    const newRetiro = await ComodatosService.createComodato(enc);
 
     const det: Array<IItem> = editableComodato.items.map(i => ({
-      comodato_enc_id: newComodato.comodato_enc_id,
+      comodato_enc_id: newRetiro.comodato_enc_id,
       envase_id: i.envase_id,
-      cantidad: i.cantidad,
+      cantidad: i.cantidad * -1,
       monto: i.cantidad * i.monto
     }));
 
-    await ComodatosService.createComodatoItems(newComodato.comodato_enc_id, det);
+    await ComodatosService.createComodatoItems(newRetiro.comodato_enc_id, det);
 
     this.setState({
       comodatoCreated: true
