@@ -44,12 +44,12 @@
 }
 
 .ComodatoInfo {
-  width: calc(100% - 200px);
+  width: 100%;
   display: flex;
   flex-direction: row;
 
   .ComodatoInfoLeft {
-    width: 80%;
+    width: 100%;
     padding: 5px;
     border-right: 1px solid $color-greyscale-light;
     box-sizing: border-box;
@@ -148,7 +148,7 @@
   .ComodatoInfoRight {
     display: flex;
     flex-direction: column;
-    width: 20%;
+    width: 150px;
     padding: 5px;
     box-sizing: border-box;
 
@@ -219,4 +219,30 @@
   margin-left: -9.5px !important;
   margin-top: -9.5px !important;
   box-shadow: rgba(0, 0, 0, 0.7) 2px 2px 5px;
+}
+
+.Input {
+  margin: 0;
+  width: 100%;
+  border: none;
+  height: 25px;
+  font-size: 12px;
+  padding: 0 10px;
+  font-family: 'Mulish';
+  box-sizing: border-box;
+}
+
+.Input:focus {
+  outline-width: 1px;
+  outline-style: solid;
+  outline-color: #2684ff;
+}
+
+.eliminar {
+  font-family: $font-family-secondary;
+
+  &:hover {
+    cursor: pointer;
+    color: $color-primary;
+  }
 }

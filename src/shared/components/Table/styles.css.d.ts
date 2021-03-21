@@ -1,1 +1,2 @@
-export const Table: string;
+export const TableContainer: string;
+export const Input: string;

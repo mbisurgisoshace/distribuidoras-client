@@ -6,6 +6,7 @@ import 'react-tabs/style/react-tabs.css';
 
 import * as styles from './styles.css';
 
+import { FormDetail } from './FormDetail';
 import { Input } from '../../../shared/components/Input';
 import { Select } from '../../../shared/components/Select';
 import { DatePicker } from '../../../shared/components/DatePicker';
@@ -50,8 +51,12 @@ interface PedidoFormState {
 }
 
 export class ComodatoForm extends React.Component<any, PedidoFormState> {
+  formDetailRef;
+
   constructor(props) {
     super(props);
+
+    this.formDetailRef = React.createRef();
 
     this.state = {
       envases: [],
@@ -67,7 +72,7 @@ export class ComodatoForm extends React.Component<any, PedidoFormState> {
       editarCliente: false,
       comodatoVigente: null,
       comodatoCreated: false,
-      pedidoConfirmado: false
+      pedidoConfirmado: false,
     };
   }
 
@@ -261,6 +266,15 @@ export class ComodatoForm extends React.Component<any, PedidoFormState> {
 
   onSubmit = async () => {
     const { editableComodato, comodatoVigente } = this.state;
+    let items = [];
+
+    if (this.formDetailRef && this.formDetailRef.current) {
+      items = this.formDetailRef.current.getItems().filter(i => i.envase_id !== '').map(i => ({
+        envase_id: i.envase_id,
+        cantidad: numeral(i.cantidad).value() || 0,
+        monto: numeral(i.precio).value() | 0
+      }))
+    }
 
     const enc: IComodato = {
       cliente_id: editableComodato.cliente_id,
@@ -278,24 +292,9 @@ export class ComodatoForm extends React.Component<any, PedidoFormState> {
       tipo: editableComodato.tipo
     };
 
-    // if (comodatoVigente) {
-    //   enc.items = editableComodato.items;
-    //   await ComodatosService.renovarComodato(comodatoVigente.comodato_enc_id, enc);
-    // } else {
-    //   const newComodato = await ComodatosService.createComodato(enc);
-    //
-    //   const det: Array<IItem> = editableComodato.items.map(i => ({
-    //     comodato_enc_id: newComodato.comodato_enc_id,
-    //     envase_id: i.envase_id,
-    //     cantidad: i.cantidad,
-    //     monto: i.cantidad * i.monto
-    //   }));
-    //
-    //   await ComodatosService.createComodatoItems(newComodato.comodato_enc_id, det);
-    // }
     const newComodato = await ComodatosService.createComodato(enc);
 
-    const det: Array<IItem> = editableComodato.items.map(i => ({
+    const det: Array<IItem> = items.map(i => ({
       comodato_enc_id: newComodato.comodato_enc_id,
       envase_id: i.envase_id,
       cantidad: i.cantidad,
@@ -353,11 +352,11 @@ export class ComodatoForm extends React.Component<any, PedidoFormState> {
           {loading && (
             <LoadingContainer size={'medium'}/>
           )}
-          <div className={styles.ComodatoSummary}>
-            <div className={styles.ComodatoId}>
-              <span>#</span> {this.getUpdatedComodato().comodato_enc_id}
-            </div>
-          </div>
+          {/*<div className={styles.ComodatoSummary}>*/}
+          {/*  <div className={styles.ComodatoId}>*/}
+          {/*    <span>#</span> {this.getUpdatedComodato().comodato_enc_id}*/}
+          {/*  </div>*/}
+          {/*</div>*/}
           <div className={styles.ComodatoInfo}>
             <div className={styles.ComodatoInfoLeft}>
               <div className={styles.row}>
@@ -421,60 +420,10 @@ export class ComodatoForm extends React.Component<any, PedidoFormState> {
                 />
               </div>
               <div className={styles.row}>
-                <div className={styles.DetalleWrapper}>
-                  <div className={styles.DetalleWrapperHeader}>
-                    <h3>Detalle Pedido</h3>
-                    <svg className={styles.Icons} onClick={() => this.addItem(false)}>
-                      <use xlinkHref={`/assets/images/sprite.svg#icon-plus-solid`}></use>
-                    </svg>
-                  </div>
-                  {this.getUpdatedComodato().items && this.getUpdatedComodato().items.map((i, index) => (
-                    <div className={classnames(styles.row, styles.ItemWrapper)} key={index}>
-                      <Select size='small' name='envase_id' placeholder='Producto...'
-                              value={this.getUpdatedComodato().items[index].envase_id} options={envasesOptions}
-                              onChange={(e) => this.onItemFieldChange(e, index)}
-                              className={styles.ItemSelectContainer}
-                      />
-                      <Input size='small' placeholder='Cantidad' name='cantidad'
-                             onChange={(e) => this.onItemFieldChange(e, index)}
-                             value={this.getUpdatedComodato().items[index].cantidad}
-                             className={styles.ItemInputContainer}
-                      />
-                      <Input size='small' placeholder='Monto' name='monto'
-                             onChange={(e) => this.onItemFieldChange(e, index)}
-                             value={this.getUpdatedComodato().items[index].monto}
-                             className={styles.ItemInputContainer}
-                      />
-                      <svg className={styles.Icons} onClick={() => this.onDeleteItem(index)}>
-                        <use xlinkHref={`/assets/images/sprite.svg#icon-ban-solid`}></use>
-                      </svg>
-                    </div>
-                  ))}
-                  {isAddingItem && (
-                    <div className={classnames(styles.row, styles.ItemWrapper, styles.newItem)}>
-                      <Select size='small' name='envase_id' placeholder='Producto...'
-                              value={this.getUpdatedItem().envase_id} options={envasesOptions}
-                              onChange={this.onItemFieldChange}
-                              className={styles.ItemSelectContainer}
-                      />
-                      <Input size='small' placeholder='Cantidad' name='cantidad' onChange={this.onItemFieldChange}
-                             value={this.getUpdatedItem().cantidad}
-                             className={styles.ItemInputContainer}
-                      />
-                      <Input size='small' placeholder='Monto' name='monto' onChange={this.onItemFieldChange}
-                             value={this.getUpdatedItem().monto}
-                             className={styles.ItemInputContainer}
-                      />
-                      <svg className={styles.Icons} onClick={() => this.addItem(true)}>
-                        <use xlinkHref={`/assets/images/sprite.svg#icon-check-solid`}></use>
-                      </svg>
-                      <svg className={styles.Icons}
-                           onClick={() => this.setState({ isAddingItem: false, editableItem: {} })}>
-                        <use xlinkHref={`/assets/images/sprite.svg#icon-ban-solid`}></use>
-                      </svg>
-                    </div>
-                  )}
-                </div>
+                <FormDetail
+                  ref={this.formDetailRef}
+                  envases={envases.map(e => ({value: e.envase_id, label: e.envase_nombre}))}
+                />
               </div>
               <div className={styles.row}>
                 <Input

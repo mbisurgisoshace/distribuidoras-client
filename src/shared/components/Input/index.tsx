@@ -104,7 +104,7 @@ export class Input extends React.Component<InputProps, InputState> {
     isFocused = isFocused || className.indexOf('react-datepicker-ignore-onclickoutside') != -1; //needed for Datepicker component
 
     let isLabelFixed = placeholder || fixedLabel || (value && value.toString()) || isFocused;
-    let InputElement = multiline ? 'textarea' : 'input';
+    let InputElement: any = multiline ? 'textarea' : 'input';
 
     return (
       <div

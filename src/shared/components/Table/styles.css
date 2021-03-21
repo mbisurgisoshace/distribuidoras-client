@@ -1,3 +1,6 @@
+@import 'fonts';
+@import 'colors';
+
 .TableContainer {
   padding: 16px;
   margin: 0 auto;
@@ -15,6 +18,8 @@ table tr {
 table thead tr {
   height: 35px;
   text-align: left;
+  color: $color-primary;
+  font-family:  $font-family-secondary;
 }
 
 table tbody tr {
@@ -50,7 +55,7 @@ table tr:last-child td:first-child {
   border-bottom-left-radius: 5px;
 }
 
-table tr:last-child td:first-child .react-select__control {
+table tr:last-child td:first-child :global(.react-select__control) {
   border-bottom-left-radius: 5px !important;
 }
 
@@ -58,22 +63,22 @@ table tr:last-child td:last-child {
   border-bottom-right-radius: 5px;
 }
 
-.react-select-container {
+table :global(.react-select-container) {
   height: 25px;
 }
 
-.react-select__control {
+table :global(.react-select__control) {
   height: 25px !important;
   min-height: 25px!important;
   border-radius: 0 !important;
   border-style: none !important;
 }
 
-.react-select__indicators {
+table :global(.react-select__indicators) {
   height: 25px !important;
 }
 
-.react-select__indicator-separator {
+table :global(.react-select__indicator-separator) {
   width: 0px !important;
 }
 
