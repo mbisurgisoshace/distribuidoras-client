@@ -69,8 +69,8 @@ export class DatePicker extends React.Component<DatePickerProps, any> {
 
   render() {
     const { value } = this.props;
-
     let momentValue = moment(value, 'DD/MM/YYYY');
+
     if (!momentValue.isValid()) {
       momentValue = null;
     }
@@ -79,7 +79,7 @@ export class DatePicker extends React.Component<DatePickerProps, any> {
       <RDatePicker
         customInput={this.getCustomInput()}
         onChange={this.onChange}
-        selected={momentValue.toDate()}
+        selected={momentValue ? momentValue.toDate() : null}
         dateFormat={'dd/MM/yyyy'}
       />
     );

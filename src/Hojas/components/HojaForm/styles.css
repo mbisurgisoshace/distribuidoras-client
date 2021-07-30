@@ -43,7 +43,7 @@
   }
 
   .EstadosWrapper {
-    margin-top: auto;
+    margin-top: 0.75rem;
 
     :not(:last-child) {
       margin-bottom: 10px;

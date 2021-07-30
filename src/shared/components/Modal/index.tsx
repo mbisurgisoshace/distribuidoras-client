@@ -168,7 +168,9 @@ export class Modal extends React.Component<ModalProps, {}> {
           >
             {this.props.header ? this.props.header : this.props.headerText || ''}
           </div>
-          {this.props.children}
+          <div className={styles.ModalContent}>
+            {this.props.children}
+          </div>
           <div className={classnames(styles.ModalFooter, this.props.footerClass || '')}>
             {this.props.footer && this.props.footer}
             {this.cancelButton || okButton ? (

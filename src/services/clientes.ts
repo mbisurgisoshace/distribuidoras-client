@@ -3,6 +3,7 @@ import { Cliente as ICliente, UltimoPedidoView as IUltimoPedidoView, UltimoComod
 
 export default class ClientesService extends BaseService {
   static clientesRoute = '/clientes';
+  static clientesSearchRoute = '/clientes/search'
   static clienteRoute = '/clientes/{cliente_id}';
   static clientesCanalRoute = '/clientes/canal/{canal_id}';
   static lastClienteRoute = '/clientes/last';
@@ -15,6 +16,10 @@ export default class ClientesService extends BaseService {
 
   public static async getCliente(id: number): Promise<ICliente> {
     return await this.getRequest<ICliente>(this.buildRoute(this.clienteRoute, { cliente_id: id }));
+  }
+
+  public static async searchClientes(filters): Promise<Array<any>> {
+    return await this.postJSONRequest<any, any>(this.clientesSearchRoute, filters);
   }
 
   public static async getClientesByCanal(canal_id: number): Promise<Array<ICliente>> {

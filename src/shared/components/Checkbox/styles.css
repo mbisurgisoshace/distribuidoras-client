@@ -50,7 +50,7 @@
     }
 
     .CheckboxLabel {
-      color: $black-70;
+      color: #000;
       text-transform: none;
       font-weight: 600;
       margin-left: 0.5rem;
@@ -61,6 +61,7 @@
       .CheckboxBox {
         //background-color: $color-primary;
         //border-color: $color-primary;
+        color: #000;
         align-items: center;
         justify-content: center;
       }

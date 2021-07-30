@@ -1,0 +1,8 @@
+.CheckboxStatusOptions {
+  display: flex;
+  flex-direction: column;
+
+  label:not(:last-child) {
+    margin-bottom: 1rem;
+  }
+}

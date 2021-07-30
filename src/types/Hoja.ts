@@ -4,9 +4,11 @@ export interface Hoja {
   fecha: string;
   zona_id: number;
   chofer_id: number;
+  acompanante_id: number;
   camion_id: number;
   km_inicial: number;
   km_final: number;
+  canjes: number;
   venta_contado: number;
   venta_cta_cte: number;
   venta_tarjeta: number;

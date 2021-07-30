@@ -1,9 +1,9 @@
 import * as React from 'react';
 import * as L from 'leaflet';
-import { Map, TileLayer, LayersControl } from 'react-leaflet';
-// import 'leaflet.pm';
+import { Map, TileLayer, LayersControl, FeatureGroup } from 'react-leaflet';
+import 'leaflet.pm';
 import 'leaflet/dist/leaflet.css';
-// import 'leaflet.pm/dist/leaflet.pm.css';
+import 'leaflet.pm/dist/leaflet.pm.css';
 
 import * as styles from './styles.css';
 
@@ -38,15 +38,15 @@ export class Mapping extends React.Component<MappingProps, MappingState> {
 
 	componentDidMount() {
 		this.map = this.leafletMap.leafletElement;
-		this.map.pm.addControls({
-			editMode: false,
-			cutPolygon: false,
-			drawCircle: false,
-			drawMarker: false,
-			drawPolyline: false,
-			drawRectangle: false
-		});
-
+		// this.map.pm.addControls({
+		// 	editMode: false,
+		// 	cutPolygon: false,
+		// 	drawCircle: false,
+		// 	drawMarker: false,
+		// 	drawPolyline: false,
+		// 	drawRectangle: false
+		// });
+		//
 		// this.map.on('pm:drawstart', (e) => {
 		// 	this.setState({ isDrawing: true });
 		// });
@@ -79,23 +79,30 @@ export class Mapping extends React.Component<MappingProps, MappingState> {
 					scrollWheelZoom={true}
 					doubleClickZoom={false}
 				>
-					{layerControl ? (
-						<LayersControl>
-							<TileLayer
-								url="https://a.tiles.mapbox.com/v4/mapbox.streets/{z}/{x}/{y}@2x.png?access_token=pk.eyJ1IjoibWJpc3VyZ2kiLCJhIjoiY2pyMmc5eXJwMWFkYTN5cG5mYncyMm0wbiJ9.fUKiZzKcM2O6sFmkFzBjCw"
-								attribution="&amp;copy <a href=&quot;http://mapbox.com&quot;>Mapbox</a> &amp;copy <a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a>"
-							/>
-							{this.props.children}
-						</LayersControl>
-					) : (
-						<div>
-							<TileLayer
-								url="https://a.tiles.mapbox.com/v4/mapbox.streets/{z}/{x}/{y}@2x.png?access_token=pk.eyJ1IjoibWJpc3VyZ2kiLCJhIjoiY2pyMmc5eXJwMWFkYTN5cG5mYncyMm0wbiJ9.fUKiZzKcM2O6sFmkFzBjCw"
-								attribution="&amp;copy <a href=&quot;http://mapbox.com&quot;>Mapbox</a> &amp;copy <a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a>"
-							/>
-							{this.props.children}
-						</div>
-					)}
+					{/*{layerControl ? (*/}
+					{/*	<LayersControl>*/}
+					{/*		<TileLayer*/}
+					{/*			url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"*/}
+					{/*			attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'*/}
+					{/*		/>*/}
+					{/*		{this.props.children}*/}
+					{/*	</LayersControl>*/}
+					{/*) : (*/}
+					{/*	<div>*/}
+					{/*		<TileLayer*/}
+					{/*			url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"*/}
+					{/*			attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'*/}
+					{/*		/>*/}
+					{/*		{this.props.children}*/}
+					{/*	</div>*/}
+					{/*)}*/}
+					<div>
+						<TileLayer
+							url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+							attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+						/>
+						{this.props.children}
+					</div>
 				</Map>
 			</div>
 		);

@@ -24,12 +24,17 @@ import { AllComercios } from '../../../Comercios/components/AllComercios';
 import { ComercioStock } from '../../../Comercios/components/ComercioStock';
 import { MonitorEntregas } from '../../../Comercios/components/MonitorEntregas';
 import { TareaComodato } from '../../../Comodatos/components/TareaComodato';
+import { NewPerdida } from '../../../Comodatos/components/NewPerdida';
+import { RenovacionComodato } from '../../../Comodatos/components/RenovacionComodato';
+import { Monitor } from '../../../Pedidos/components/Monitor';
+import { Limites } from '../../../Zonas/components/Limites';
+import ReporteMapa from '../../../Reportes/Mapa';
 
 const AuthenticatedRoutes = enhanceWithHeader(() => (
   <React.Fragment>
     <AuthenticatedRoute path="/" exact component={Home}/>
     <AuthenticatedRoute path="/tablas/general" exact component={Home}/>
-    <AuthenticatedRoute path="/tablas/zonas" exact component={DefinirZona}/>
+    <AuthenticatedRoute path="/tablas/zonas" exact component={Limites}/>
     <AuthenticatedRoute path="/hojas" exact component={AllHojas}/>
     <AuthenticatedRoute path="/hojas/:hojaId(\d+)" exact component={Hoja}/>
     <AuthenticatedRoute path="/clientes" exact component={AllClientes}/>
@@ -40,14 +45,18 @@ const AuthenticatedRoutes = enhanceWithHeader(() => (
     <AuthenticatedRoute path="/comercios/entregas" exact component={MonitorEntregas}/>
     <AuthenticatedRoute path="/comercios/stock/new" exact component={ComercioStock}/>
     <AuthenticatedRoute path="/comercios/:comercioId(\d+)" exact component={Comercio}/>
+    <AuthenticatedRoute path="/pedidos" exact component={Monitor}/>
     <AuthenticatedRoute path="/pedidos/new" exact component={NewPedido}/>
     <AuthenticatedRoute path="/comodatos/new" exact component={NewComodato}/>
     <AuthenticatedRoute path="/comodatos/retiro" exact component={NewRetiro}/>
+    <AuthenticatedRoute path="/comodatos/perdida" exact component={NewPerdida}/>
     <AuthenticatedRoute path="/comodatos/gestion" exact component={TareaComodato}/>
+    <AuthenticatedRoute path="/comodatos/renovacion" exact component={RenovacionComodato}/>
     <AuthenticatedRoute path="/stock" exact component={AllClientes}/>
     <AuthenticatedRoute path="/stock/cierre" exact component={ControlStock}/>
     <AuthenticatedRoute path="/stock/control" exact component={ControlStock}/>
     <AuthenticatedRoute path="/reportes" exact component={Reportes}/>
+    <AuthenticatedRoute path="/reportes/mapa" exact component={ReporteMapa}/>
   </React.Fragment>
 ));
 

@@ -42,6 +42,7 @@ interface ControlStockFormState {
   selectedColumna: IColumnaStock;
   showDetalle: boolean;
   loading: boolean;
+  saving: boolean;
 }
 
 export class ControlStockForm extends React.Component<ControlStockFormProps, ControlStockFormState> {
@@ -61,7 +62,8 @@ export class ControlStockForm extends React.Component<ControlStockFormProps, Con
       selectedHoja: null,
       selectedColumna: null,
       showDetalle: false,
-      loading: false
+      loading: false,
+      saving: false
     };
   };
 
@@ -136,6 +138,10 @@ export class ControlStockForm extends React.Component<ControlStockFormProps, Con
     const { cierre } = this.props;
     const { hojas, selectedHoja, columnas, cargas, envases, movimientos } = this.state;
 
+    this.setState({
+      saving: true
+    });
+
     const hoja = hojas.find(h => h.hoja_ruta_id === selectedHoja);
     const index = hojas.findIndex(h => h.hoja_ruta_id === hoja.hoja_ruta_id);
 
@@ -162,6 +168,7 @@ export class ControlStockForm extends React.Component<ControlStockFormProps, Con
 
     this.setState({
       hojas,
+      saving: false,
       selectedHoja: null
     });
   };
@@ -175,7 +182,7 @@ export class ControlStockForm extends React.Component<ControlStockFormProps, Con
 
   render() {
     const { cierre } = this.props;
-    const { fecha, hojas, cargas, envases, choferes, columnas, movimientos, selectedHoja, selectedColumna, showDetalle, loading } = this.state;
+    const { fecha, hojas, cargas, envases, choferes, columnas, movimientos, selectedHoja, selectedColumna, showDetalle, loading, saving } = this.state;
     const hojasOptions = hojas.map(h => {
       const chofer = choferes.find(c => c.chofer_id === h.chofer_id);
       return {
@@ -220,7 +227,7 @@ export class ControlStockForm extends React.Component<ControlStockFormProps, Con
               {loading && <LoadingIndicator size='small'/>}
             </div>
             <div className={styles.lock}>
-              {selectedHoja && this.checkOk && <i className="fas fa-lock" onClick={this.lockStock}/>}
+              {!saving && selectedHoja && this.checkOk && <i className="fas fa-lock" onClick={this.lockStock}/>}
             </div>
           </div>
         </div>

@@ -123,6 +123,7 @@ export class Sidebar extends React.Component<SidebarProps, SidebarState> {
 									menuitems={[
 										{ href: '/comodatos/new', title: 'Comodatos', subgroup: 'comodatos' },
 										{ href: '/comodatos/retiro', title: 'Retiros', subgroup: 'retiros' },
+										{ href: '/comodatos/perdida', title: 'Perdidas', subgroup: 'perdidas' },
 										{ href: '/comodatos/renovacion', title: 'Renovacion', subgroup: 'renovacion' },
 										{ href: '/comodatos/gestion', title: 'Gestion Comodatos', subgroup: 'gestion-comodatos' },
 									]}

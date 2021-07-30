@@ -5,6 +5,7 @@ import ReactSelect, { components } from 'react-select';
 import { Icon } from '../Icon';
 import * as uuidv4 from 'uuid/v4';
 import { LoadingIndicator } from '../LoadingIndicator';
+import { Checkbox } from '../Checkbox';
 
 type SelectSizes = 'medium' | 'small';
 
@@ -56,22 +57,45 @@ const Placeholder = props => {
 };
 
 const MultiValueLabel = props => {
+  // let selectedValues = props.selectProps.value;
+  // let isFirst = false;
+  // if (selectedValues.indexOf(props.data) == 0) {
+  //   isFirst = true;
+  // }
+  // return (
+  //   <components.MultiValueLabel {...props}>{`${
+  //     isFirst ? selectedValues.map(e => e.value).join(', ') : ''
+  //   }`}</components.MultiValueLabel>
+  // );
   let selectedValues = props.selectProps.value;
+
   let isFirst = false;
-  if (selectedValues.indexOf(props.data) == 0) {
+  if (selectedValues.indexOf(props.data) === 0) {
     isFirst = true;
   }
+
   return (
     <components.MultiValueLabel {...props}>{`${
-      isFirst ? selectedValues.map(e => e.value).join(', ') : ''
+      isFirst ? selectedValues.map((e: any) => e.label).join(', ') : ''
     }`}</components.MultiValueLabel>
   );
 };
 
 const Option = props => {
+  // return (
+  //   <components.Option {...props}>
+  //     {props.children}
+  //   </components.Option>
+  // );
   return (
     <components.Option {...props}>
-      {props.children}
+      {props.isMulti ? (
+        <Checkbox readOnly checked={props.isSelected}>
+          {props.children}
+        </Checkbox>
+      ) : (
+        props.children
+      )}
     </components.Option>
   );
 };
@@ -137,6 +161,14 @@ export class Select extends React.Component<SelectProps, SelectState> {
         }
       });
     }
+    // if (typeof onChange == 'function') {
+    //   onChange({
+    //     target: {
+    //       name: name,
+    //       value: !option || Array.isArray(option) ? option.map(opt => opt.value) : option.value
+    //     }
+    //   });
+    // }
   }
 
   render() {

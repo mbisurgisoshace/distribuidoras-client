@@ -114,6 +114,14 @@
   }
 }
 
+.ModalContent {
+  flex: 1;
+  padding: 15px;
+  overflow: auto;
+  text-align: left;
+  background-color: #F7F7F7;
+}
+
 .ModalFooter {
   display: flex;
   background-color: $color-greyscale-white;

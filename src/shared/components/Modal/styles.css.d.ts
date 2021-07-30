@@ -12,6 +12,7 @@ export const ExtendedModalHeaderTitle: string;
 export const ExtendedModalHeaderActions: string;
 export const FilterHeaderClear: string;
 export const ExtendedModalHeaderActionsSearch: string;
+export const ModalContent: string;
 export const ModalButtons: string;
 export const OkBtn: string;
 export const CancelBtn: string;

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { AgGridReact,  } from 'ag-grid-react';
+import { AgGridReact } from 'ag-grid-react';
 
 import * as styles from './styles.css';
 
@@ -8,9 +8,13 @@ import { Cliente } from '../../../types';
 import { RoutedOuterWrapper as OuterWrapper } from '../../../shared/layouts/OuterWrapper';
 
 import ClientesService from '../../../services/clientes';
+import { Button } from '../../../shared/components/Button';
+import { LoadingIndicator } from '../../../shared/components/LoadingIndicator';
+import TangoService from '../../../services/tango';
 
 interface AllClientesState {
   loading: boolean;
+  syncing: boolean;
   clientes: Array<Cliente>
 }
 
@@ -23,6 +27,7 @@ export class AllClientes extends React.Component<any, AllClientesState> {
 
     this.state = {
       loading: true,
+      syncing: false,
       clientes: []
     };
   }
@@ -42,7 +47,7 @@ export class AllClientes extends React.Component<any, AllClientesState> {
     const { cliente_id } = e.data;
 
     if (cliente_id) {
-      window.open(`/clientes/${cliente_id}`, '_blank')
+      window.open(`/clientes/${cliente_id}`, '_blank');
     }
   };
 
@@ -85,16 +90,36 @@ export class AllClientes extends React.Component<any, AllClientesState> {
     this.gridColumnApi = params.columnApi;
 
     this.gridApi.sizeColumnsToFit();
+  };
+
+  onSyncClientes = async () => {
+    this.setState({
+      syncing: true
+    });
+
+    try {
+      await TangoService.syncClientes();
+    } catch (err) {
+      console.log('err', err);
+    }
+
+    this.setState({
+      syncing: false
+    });
   }
 
   render() {
-    const { clientes, loading } = this.state;
+    const { clientes, loading, syncing } = this.state;
 
     return (
       <OuterWrapper>
         <div className={styles.AllClientes}>
           <div className={styles.AllClientesWrapper}>
-            <div className="ag-theme-balham" style={{ height: '100%', width: '100%' }}>
+            <div style={{marginBottom: 5, display: 'flex', justifyContent: 'flex-end'}}>
+              {!syncing && <Button size={'tiny'} onClick={this.onSyncClientes}>Sincronizar Clientes</Button>}
+              {syncing && <LoadingIndicator size={'small'} />}
+            </div>
+            <div className='ag-theme-balham' style={{ flex: 1, width: '100%' }}>
               <AgGridReact
                 pagination={true}
                 rowData={clientes}

@@ -55,7 +55,7 @@ export const FormDetail = React.forwardRef<any, FormDetailProps>(({ envases }, r
     };
 
     const onBlur = () => {
-      updateMyData(index, id, numeral(value).format('0,0.00'));
+      updateMyData(index, id, value);
     };
 
     const onFocus = () => {
@@ -104,7 +104,8 @@ export const FormDetail = React.forwardRef<any, FormDetailProps>(({ envases }, r
       Cell: ({ value }) => {
         return (
           <div style={{backgroundColor: '#e4e4e5', height: '25px', display: 'flex', alignItems: 'center'}}>
-            <div style={{ padding: '0 10px' }}>{numeral(value).format('$0,0.00')}</div>
+            <div style={{ padding: '0 10px' }}>{numeral(value).format('$0.0,00')}</div>
+            {/*<div style={{ padding: '0 10px' }}>{value}</div>*/}
           </div>
         )
       }

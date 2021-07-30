@@ -260,6 +260,9 @@ export class HojaForm extends React.Component<HojaFormProps, HojaFormState> {
             <Select size='small' label='Chofer' name='chofer_id' placeholder='Seleccionar...'
                     value={this.getUpdatedHoja().chofer_id}
                     options={choferesOptions} onChange={this.onFieldChange}/>
+            <Select size='small' label='Acompañante' name='acompanante_id' placeholder='Seleccionar...'
+                    value={this.getUpdatedHoja().acompanante_id}
+                    options={choferesOptions} onChange={this.onFieldChange}/>
             <Select size='small' label='Camion' name='camion_id' placeholder='Seleccionar...'
                     value={this.getUpdatedHoja().camion_id}
                     options={camionesOptions} onChange={this.onFieldChange}/>
@@ -281,6 +284,8 @@ export class HojaForm extends React.Component<HojaFormProps, HojaFormState> {
                      value={this.getUpdatedHoja().km_inicial || ''}/>
               <Input size='small' label='Km Final' name='km_final' onChange={this.onFieldChange}
                      value={this.getUpdatedHoja().km_final || ''}/>
+              <Input size='small' label='Canjes' name='canjes' onChange={this.onFieldChange}
+                     value={this.getUpdatedHoja().canjes || ''}/>
             </div>
             <div className={styles.row}>
               <div className={styles.OpcionesPagoWrapper} style={{ width: '25%' }}>

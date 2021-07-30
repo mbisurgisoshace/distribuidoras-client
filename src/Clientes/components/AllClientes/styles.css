@@ -16,6 +16,7 @@
   border-radius: 5px;
   flex-wrap: wrap;
   width: 1440px;
+  flex-direction: column;
   box-sizing: border-box;
   margin: 0 auto;
   position: relative;

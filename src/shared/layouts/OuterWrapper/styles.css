@@ -1,5 +1,5 @@
 .OuterWrapper {
     display: flex;
     flex-direction: row;
-    height: 100%;
+    height: calc(100% - 30px);
 }

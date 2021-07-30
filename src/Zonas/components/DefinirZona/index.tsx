@@ -128,96 +128,93 @@ export class DefinirZona extends React.Component<any, State> {
 	};
 
 	render() {
-		return null
-		// const { coords, zonas, showAll, activeZonaId, editableZona } = this.state;
-		// const zonasOptions = zonas.filter((z) => !z.limites).map((z) => {
-		// 	return {
-		// 		value: z.ZonaID,
-		// 		label: z.ZonaNombre
-		// 	};
-		// });
-		//
-		// zonasOptions.unshift({
-		// 	value: 0,
-		// 	label: ''
-		// });
-		//
-		// return (
-		// 	<OuterWrapper>
-		// 		<div style={{ width: '100%', height: '100%' }}>
-		// 			<div className={styles.container}>
-		// 				<div className={styles.ZonasForm}>
-		// 					<h3 className={styles.ZonasTitle}>Zonas</h3>
-		// 					{zonas.map((z) => {
-		// 						return activeZonaId === z.ZonaID ? (
-		// 							<ZonaFormInput
-		// 								zona={{ ...z, ...editableZona }}
-		// 								onSave={this.onSave}
-		// 								onCancel={() => this.setState({ activeZonaId: null, editableZona: null })}
-		// 								onEditField={this.onEditField}
-		// 								key={z.ZonaID}
-		// 							/>
-		// 						) : (
-		// 							<div className={styles.ZonaFieldGroup} key={z.ZonaID}>
-		// 								<div className={styles.GroupHeader}>
-		// 									<svg className={styles.ellipsis}>
-		// 										<use xlinkHref={`/assets/images/sprite.svg#icon-ellipsis-h`} />
-		// 									</svg>
-		// 									<div className={styles.GroupActions}>
-		// 										<div
-		// 											className={styles.Action}
-		// 											onClick={() =>
-		// 												this.setState({ activeZonaId: z.ZonaID, editableZona: z })}
-		// 										>
-		// 											Editar
-		// 										</div>
-		// 										<div className={styles.Action} onClick={() => this.onDelete(z.ZonaID)}>
-		// 											Eliminar
-		// 										</div>
-		// 									</div>
-		// 								</div>
-		// 								<div className={styles.label}>
-		// 									{z.ZonaNombre}
-		// 									{z.color && (
-		// 										<div className={styles.color} style={{ backgroundColor: z.color }} />
-		// 									)}
-		// 								</div>
-		// 							</div>
-		// 						);
-		// 					})}
-		// 				</div>
-		// 				<Mapping
-		// 					zoom={15}
-		// 					center={{ lat: coords.lat, lng: coords.lng }}
-		// 					onDoubleClick={this.onDoubleClick}
-		// 					onPolygonCreated={this.onPolygonCreated}
-		// 				>
-		// 					{activeZonaId &&
-		// 					editableZona.limites && (
-		// 						<Polygon positions={JSON.parse(editableZona.limites)} color={editableZona.color} />
-		// 					)}
-		// 					{showAll &&
-		// 						zonas.map((z) => {
-		// 							if (z.limites) {
-		// 								return (
-		// 									<Polygon key={z.ZonaID} positions={JSON.parse(z.limites)} color={z.color}>
-		// 										<Popup>{z.ZonaNombre}</Popup>
-		// 									</Polygon>
-		// 								);
-		// 							}
-		// 						})}
-		// 				</Mapping>
-		// 				<div className={styles.checkbox}>
-		// 					<input
-		// 						type="checkbox"
-		// 						checked={showAll}
-		// 						onChange={() => this.setState({ showAll: !showAll })}
-		// 					/>{' '}
-		// 					Ver todas
-		// 				</div>
-		// 			</div>
-		// 		</div>
-		// 	</OuterWrapper>
-		//);
+		const { coords, zonas, showAll, activeZonaId, editableZona } = this.state;
+		const zonasOptions = zonas.filter((z) => !z.limites).map((z) => {
+			return {
+				value: z.zona_id,
+				label: z.zona_nombre
+			};
+		});
+
+		zonasOptions.unshift({
+			value: 0,
+			label: ''
+		});
+
+		return (
+			<OuterWrapper>
+					<div className={styles.container}>
+						<div className={styles.ZonasForm}>
+							<h3 className={styles.ZonasTitle}>Zonas</h3>
+							{zonas.map((z) => {
+								return activeZonaId === z.zona_id ? (
+									<ZonaFormInput
+										zona={{ ...z, ...editableZona }}
+										onSave={this.onSave}
+										onCancel={() => this.setState({ activeZonaId: null, editableZona: null })}
+										onEditField={this.onEditField}
+										key={z.zona_id}
+									/>
+								) : (
+									<div className={styles.ZonaFieldGroup} key={z.zona_id}>
+										<div className={styles.GroupHeader}>
+											<svg className={styles.ellipsis}>
+												<use xlinkHref={`/assets/images/sprite.svg#icon-ellipsis-h`} />
+											</svg>
+											<div className={styles.GroupActions}>
+												<div
+													className={styles.Action}
+													onClick={() =>
+														this.setState({ activeZonaId: z.zona_id, editableZona: z })}
+												>
+													Editar
+												</div>
+												<div className={styles.Action} onClick={() => this.onDelete(z.zona_id)}>
+													Eliminar
+												</div>
+											</div>
+										</div>
+										<div className={styles.label}>
+											{z.zona_nombre}
+											{z.color && (
+												<div className={styles.color} style={{ backgroundColor: z.color }} />
+											)}
+										</div>
+									</div>
+								);
+							})}
+						</div>
+						<Mapping
+							zoom={15}
+							center={{ lat: coords.lat, lng: coords.lng }}
+							onDoubleClick={this.onDoubleClick}
+							onPolygonCreated={this.onPolygonCreated}
+						>
+							{activeZonaId &&
+							editableZona.limites && (
+								<Polygon positions={JSON.parse(editableZona.limites)} color={editableZona.color} />
+							)}
+							{showAll &&
+								zonas.map((z) => {
+									if (z.limites) {
+										return (
+											<Polygon key={z.zona_id} positions={JSON.parse(z.limites)} color={z.color}>
+												<Popup>{z.zona_nombre}</Popup>
+											</Polygon>
+										);
+									}
+								})}
+						</Mapping>
+						<div className={styles.checkbox}>
+							<input
+								type="checkbox"
+								checked={showAll}
+								onChange={() => this.setState({ showAll: !showAll })}
+							/>{' '}
+							Ver todas
+						</div>
+					</div>
+			</OuterWrapper>
+		);
 	}
 }

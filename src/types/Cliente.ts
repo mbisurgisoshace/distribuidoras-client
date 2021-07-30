@@ -14,6 +14,7 @@ export interface Cliente {
   latitud?: number;
   longitud?: number;
   observaciones?: string;
+  zona_id?: number
   zona_sub_id?: number;
   condicion_iva_id?: number;
   cuit?: string;
@@ -25,4 +26,6 @@ export interface Cliente {
   estado?: number;
   presento_documento?: boolean;
   presento_impuesto?: boolean;
+  motivo?: string;
+  fecha_motivo?: string;
 }

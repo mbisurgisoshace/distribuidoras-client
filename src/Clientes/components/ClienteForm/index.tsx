@@ -202,6 +202,9 @@ export class ClienteForm extends React.Component<ClienteFormProps, ClienteFormSt
   onSubmit = async () => {
     this.setState({ loading: true });
     const cliente = this.getUpdatedCliente();
+    if (cliente.motivo) {
+      cliente.fecha_motivo = moment().format('YYYY/MM/DD');
+    }
 
     if (this.props.cliente) {
       const updatedCliente = await ClientesService.updateCliente(cliente, cliente.cliente_id);
@@ -251,6 +254,44 @@ export class ClienteForm extends React.Component<ClienteFormProps, ClienteFormSt
       value: c.condicion_venta_id
     }));
 
+    const motivos = [{
+      label: 'Compro',
+      value: 'Compro'
+    }, {
+      label: 'No Compro - Por Precio',
+      value: 'No Compro - Por Precio'
+    }, {
+      label: 'Gas Natural',
+      value: 'Gas Natural'
+    }, {
+      label: 'Llamar mas Adelante',
+      value: 'Llamar mas Adelante'
+    },  {
+      label: 'Llamar en 15 dias',
+      value: 'Llamar en 15 dias'
+    }, {
+      label: 'Llamar en 1 mes',
+      value: 'Llamar en 1 mes'
+    }, {
+      label: 'Llamar en 2 meses',
+      value: 'Llamar en 2 meses'
+    }, {
+      label: 'Llamar en 3 meses',
+      value: 'Llamar en 3 meses'
+    }, {
+      label: 'Cambio de Producto',
+      value: 'Cambio de Producto'
+    }, {
+      label: 'Actualizar Datos',
+      value: 'Actualizar Datos'
+    }, {
+      label: 'No Compro',
+      value: 'No Compro'
+    }, {
+      label: 'Varios',
+      value: 'Varios'
+    }]
+    console.log('this.getUpdatedCliente()', this.getUpdatedCliente());
     return (
       <div className={styles.ClienteForm}>
         {nuevo && this.getUpdatedCliente().cliente_id &&
@@ -405,6 +446,9 @@ export class ClienteForm extends React.Component<ClienteFormProps, ClienteFormSt
               <Select size='small' label='Lista de Precio' name='lista_precio_id' placeholder='Seleccionar...'
                       value={this.getUpdatedCliente().lista_precio_id}
                       options={listasPrecioOptions} onChange={this.onFieldChange}/>
+              <Select size='small' label='Motivo de Desactivacion' name='motivo' placeholder='Seleccionar...'
+                      value={this.getUpdatedCliente().motivo}
+                      options={motivos} onChange={this.onFieldChange}/>
 
               <Checkbox checked={this.getUpdatedCliente().presento_documento} name={'presento_documento'} onChange={this.onCheckboxFieldChange}>Presento DNI</Checkbox>
               <Checkbox checked={this.getUpdatedCliente().presento_impuesto} name={'presento_impuesto'} onChange={this.onCheckboxFieldChange}>Presento Impuesto</Checkbox>

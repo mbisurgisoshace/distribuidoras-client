@@ -1,4 +1,4 @@
-type TipoComodato = 'comodato' | 'retiro';
+type TipoComodato = 'comodato' | 'retiro' | 'perdida' | 'renovacion';
 
 export interface Comodato {
   comodato_enc_id?: number;

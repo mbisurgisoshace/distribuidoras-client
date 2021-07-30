@@ -15,6 +15,7 @@ interface CheckboxProps {
   formControl?: boolean;
   size?: CheckboxSizes;
   readOnly?: boolean;
+  indeterminate?: boolean;
   fluid?: boolean;
 }
 
@@ -37,7 +38,8 @@ export class Checkbox extends React.Component<CheckboxProps, any> {
         children,
         name,
         readOnly,
-        fluid = false
+        fluid = false,
+        indeterminate = false
       } = this.props,
       id = this.state.id;
 
@@ -61,9 +63,14 @@ export class Checkbox extends React.Component<CheckboxProps, any> {
           })}
         >
           <div className={styles.CheckboxBox}>
-            {checked && (
+            {checked && !indeterminate && (
               <div className={styles.CheckboxFill}>
 
+              </div>
+            )}
+            {indeterminate && (
+              <div className={styles.CheckboxFill}>
+                <i className={'fas fa-minus'} />
               </div>
             )}
           </div>

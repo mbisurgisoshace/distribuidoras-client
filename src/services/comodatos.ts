@@ -7,6 +7,7 @@ export default class ComodatosService extends BaseService {
   static comodatoItemsRoute = '/comodatos/{comodato_enc_id}';
   static comodatoClienteRoute = '/comodatos/cliente/{cliente_id}';
   static comodatoRenovarRoute = '/comodatos/{comodato_enc_id}/renovar';
+  static comodatosRenovarRoute = '/comodatos/renovar';
   static comodatoGestionRoute = '/comodatos/gestion';
 
   public static async getComodatos(): Promise<Array<IComodato>> {
@@ -17,9 +18,9 @@ export default class ComodatosService extends BaseService {
     return await this.getRequest<Array<any>>(this.comodatosVigenteRoute);
   }
 
-  public static async getComodatoVigenteByCliente(clienteId: number): Promise<IComodato> {
+  public static async getComodatoVigenteByCliente(clienteId: number): Promise<Array<IComodato>> {
     const route = this.buildRoute(this.comodatoClienteRoute, {cliente_id: clienteId});
-    return await this.getRequest<IComodato>(route);
+    return await this.getRequest<Array<IComodato>>(route);
   }
 
   public static async createComodato(comodato: IComodato): Promise<IComodato> {
@@ -38,5 +39,9 @@ export default class ComodatosService extends BaseService {
 
   public static async gestionarComodato(gestion: Array<any>): Promise<any> {
     return await this.postJSONRequest<Array<any>, any>(this.comodatoGestionRoute, gestion);
+  }
+
+  public static async renovarComodatos(comodatos: Array<IComodato>): Promise<Array<any>> {
+    return await this.putJSONRequest<Array<IComodato>, Array<any>>(this.comodatosRenovarRoute, comodatos);
   }
 }

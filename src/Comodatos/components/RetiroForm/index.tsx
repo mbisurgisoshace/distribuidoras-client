@@ -29,6 +29,7 @@ import ClientesService from '../../../services/clientes';
 import ComodatosService from '../../../services/comodatos';
 import { Redirect } from 'react-router-dom';
 import { Checkbox } from '../../../shared/components/Checkbox';
+import { FormDetail } from './FormDetail';
 
 type IEditable<T> = { [P in keyof T]?: T[P] };
 
@@ -50,8 +51,12 @@ interface PedidoFormState {
 }
 
 export class RetiroForm extends React.Component<any, PedidoFormState> {
+  formDetailRef;
+
   constructor(props) {
     super(props);
+
+    this.formDetailRef = React.createRef();
 
     this.state = {
       envases: [],
@@ -241,6 +246,15 @@ export class RetiroForm extends React.Component<any, PedidoFormState> {
 
   onSubmit = async () => {
     const { editableComodato, comodatoVigente } = this.state;
+    let items = [];
+
+    if (this.formDetailRef && this.formDetailRef.current) {
+      items = this.formDetailRef.current.getItems().filter(i => i.envase_id !== '').map(i => ({
+        envase_id: i.envase_id,
+        cantidad: numeral(i.cantidad).value() || 0,
+        monto: numeral(i.precio).value() | 0
+      }))
+    }
 
     const enc: IComodato = {
       cliente_id: editableComodato.cliente_id,
@@ -259,14 +273,14 @@ export class RetiroForm extends React.Component<any, PedidoFormState> {
     };
 
     const newRetiro = await ComodatosService.createComodato(enc);
-
-    const det: Array<IItem> = editableComodato.items.map(i => ({
+    console.log('editableComodato', editableComodato);
+    const det: Array<IItem> =items.map(i => ({
       comodato_enc_id: newRetiro.comodato_enc_id,
       envase_id: i.envase_id,
       cantidad: i.cantidad * -1,
       monto: i.cantidad * i.monto
     }));
-
+    console.log('det', det);
     await ComodatosService.createComodatoItems(newRetiro.comodato_enc_id, det);
 
     this.setState({
@@ -318,11 +332,11 @@ export class RetiroForm extends React.Component<any, PedidoFormState> {
           {loading && (
             <LoadingContainer size={'medium'}/>
           )}
-          <div className={styles.ComodatoSummary}>
-            <div className={styles.ComodatoId}>
-              <span>#</span> {this.getUpdatedComodato().comodato_enc_id}
-            </div>
-          </div>
+          {/*<div className={styles.ComodatoSummary}>*/}
+          {/*  <div className={styles.ComodatoId}>*/}
+          {/*    <span>#</span> {this.getUpdatedComodato().comodato_enc_id}*/}
+          {/*  </div>*/}
+          {/*</div>*/}
           <div className={styles.ComodatoInfo}>
             <div className={styles.ComodatoInfoLeft}>
               <div className={styles.row}>
@@ -386,60 +400,10 @@ export class RetiroForm extends React.Component<any, PedidoFormState> {
                 />
               </div>
               <div className={styles.row}>
-                <div className={styles.DetalleWrapper}>
-                  <div className={styles.DetalleWrapperHeader}>
-                    <h3>Detalle Pedido</h3>
-                    <svg className={styles.Icons} onClick={() => this.addItem(false)}>
-                      <use xlinkHref={`/assets/images/sprite.svg#icon-plus-solid`}></use>
-                    </svg>
-                  </div>
-                  {this.getUpdatedComodato().items && this.getUpdatedComodato().items.map((i, index) => (
-                    <div className={classnames(styles.row, styles.ItemWrapper)} key={index}>
-                      <Select size='small' name='envase_id' placeholder='Producto...'
-                              value={this.getUpdatedComodato().items[index].envase_id} options={envasesOptions}
-                              onChange={(e) => this.onItemFieldChange(e, index)}
-                              className={styles.ItemSelectContainer}
-                      />
-                      <Input size='small' placeholder='Cantidad' name='cantidad'
-                             onChange={(e) => this.onItemFieldChange(e, index)}
-                             value={this.getUpdatedComodato().items[index].cantidad}
-                             className={styles.ItemInputContainer}
-                      />
-                      <Input size='small' placeholder='Monto' name='monto'
-                             onChange={(e) => this.onItemFieldChange(e, index)}
-                             value={this.getUpdatedComodato().items[index].monto}
-                             className={styles.ItemInputContainer}
-                      />
-                      <svg className={styles.Icons} onClick={() => this.onDeleteItem(index)}>
-                        <use xlinkHref={`/assets/images/sprite.svg#icon-ban-solid`}></use>
-                      </svg>
-                    </div>
-                  ))}
-                  {isAddingItem && (
-                    <div className={classnames(styles.row, styles.ItemWrapper, styles.newItem)}>
-                      <Select size='small' name='envase_id' placeholder='Producto...'
-                              value={this.getUpdatedItem().envase_id} options={envasesOptions}
-                              onChange={this.onItemFieldChange}
-                              className={styles.ItemSelectContainer}
-                      />
-                      <Input size='small' placeholder='Cantidad' name='cantidad' onChange={this.onItemFieldChange}
-                             value={this.getUpdatedItem().cantidad}
-                             className={styles.ItemInputContainer}
-                      />
-                      <Input size='small' placeholder='Monto' name='monto' onChange={this.onItemFieldChange}
-                             value={this.getUpdatedItem().monto}
-                             className={styles.ItemInputContainer}
-                      />
-                      <svg className={styles.Icons} onClick={() => this.addItem(true)}>
-                        <use xlinkHref={`/assets/images/sprite.svg#icon-check-solid`}></use>
-                      </svg>
-                      <svg className={styles.Icons}
-                           onClick={() => this.setState({ isAddingItem: false, editableItem: {} })}>
-                        <use xlinkHref={`/assets/images/sprite.svg#icon-ban-solid`}></use>
-                      </svg>
-                    </div>
-                  )}
-                </div>
+                <FormDetail
+                  ref={this.formDetailRef}
+                  envases={envases.map(e => ({value: e.envase_id, label: e.envase_nombre}))}
+                />
               </div>
               <div className={styles.row}>
                 <Input

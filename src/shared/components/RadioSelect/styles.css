@@ -1,0 +1,12 @@
+.RadioSelect {
+  display: flex;
+  flex-direction: column;
+
+  .RadioOption {
+    margin-bottom: 1rem;
+  }
+
+  .RadioOptionComponent {
+    padding: 0.5rem 1.5rem;
+  }
+}

@@ -3,11 +3,16 @@ import { Movimiento as IMovimiento, MovimientoItem as IMovimientoItem } from '..
 
 export default class MovimientosService extends BaseService {
   static movimientosRoute = '/movimientos';
+  static movimientosSearchRoute = '/movimientos/search';
   static movimentosByHojaRoute = '/movimientos/{hoja_id}';
   static movimientoItemsRoute = '/movimientos/{movimiento_enc_id}';
 
   public static async getMovimientos(): Promise<Array<IMovimiento>> {
     return await this.getRequest<Array<IMovimiento>>(this.movimientosRoute);
+  }
+
+  public static async searchMovimientos(filters): Promise<Array<any>> {
+    return await this.postJSONRequest<any, any>(this.movimientosSearchRoute, filters);
   }
 
   public static async getMovimientosByHoja(hoja_id: number): Promise<Array<IMovimiento>> {
