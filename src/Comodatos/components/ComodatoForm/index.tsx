@@ -272,7 +272,7 @@ export class ComodatoForm extends React.Component<any, PedidoFormState> {
       items = this.formDetailRef.current.getItems().filter(i => i.envase_id !== '').map(i => ({
         envase_id: i.envase_id,
         cantidad: numeral(i.cantidad).value() || 0,
-        monto: numeral(i.precio).value() | 0
+        monto: numeral(i.precio).value() || 0
       }))
     }
 

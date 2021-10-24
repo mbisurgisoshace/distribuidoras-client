@@ -25,7 +25,8 @@ import {
   Comercio as IComercio,
   Movimiento as IPedido,
   MovimientoItem as IItem,
-  CondicionVenta as ICondicionVenta
+  CondicionVenta as ICondicionVenta,
+  TipoMovimiento as ITipoMovimiento
 } from '../../../types';
 
 import HojasService from '../../../services/hojas';
@@ -43,6 +44,8 @@ import { ClientsInputSearch } from '../../../shared/components/ClientsInputSearc
 import ClientesService from '../../../services/clientes';
 import CanalesService from '../../../services/canales';
 import SubzonasService from '../../../services/subzonas';
+import { FormDetail } from './FormDetail';
+import TiposMovimientoService from '../../../services/tiposMovimiento';
 
 type IEditable<T> = { [P in keyof T]?: T[P] };
 
@@ -70,17 +73,23 @@ interface PedidoFormState {
   subzonas: Array<ISubZona>;
   comercios: Array<IComercio>;
   cliente: IEditable<ICliente>;
+  tipos: Array<ITipoMovimiento>;
   editableItem: IEditable<IItem>;
   editablePedido: IEditable<IPedido>;
   condicionesVenta: Array<ICondicionVenta>;
 }
 
 export class PedidoForm extends React.Component<PedidoFormProps, PedidoFormState> {
+  formDetailRef;
+
   constructor(props) {
     super(props);
 
+    this.formDetailRef = React.createRef();
+
     this.state = {
       hojas: [],
+      tipos: [],
       envases: [],
       precios: [],
       canales: [],
@@ -110,6 +119,7 @@ export class PedidoForm extends React.Component<PedidoFormProps, PedidoFormState
     const subzonas = await SubzonasService.getSubzonas();
     const clientes = await ClientesService.getClientes();
     const choferes = await ChoferesService.getChoferes();
+    const tipos = await TiposMovimientoService.getTiposMovimiento();
     const comercios = await ComerciosService.getComercios(true);
     const condicionesVenta = await CondicionesVentaService.getCondicionesVenta();
     const hojas = await HojasService.getHojasByFecha(moment().format('YYYY-MM-DD'));
@@ -122,6 +132,7 @@ export class PedidoForm extends React.Component<PedidoFormProps, PedidoFormState
 
     this.setState({
       hojas,
+      tipos,
       clientes,
       envases,
       canales,
@@ -319,6 +330,22 @@ export class PedidoForm extends React.Component<PedidoFormProps, PedidoFormState
       }
     }
 
+    // let items = [];
+    //
+    // if (this.formDetailRef && this.formDetailRef.current) {
+    //   items = this.formDetailRef.current.getItems().filter(i => i.envase_id !== '').map(i => ({
+    //     envase_id: i.envase_id,
+    //     cantidad: numeral(i.cantidad).value() || 0,
+    //     monto: numeral(i.precio).value() || 0
+    //   }))
+    // }
+
+    const items = editablePedido.items.map(i => ({
+      envase_id: i.envase_id,
+      cantidad: numeral(i.cantidad).value() || 0,
+      monto: numeral(i.monto).value() || 0
+    }))
+
     const enc: IPedido = {
       visito: false,
       vendio: false,
@@ -332,14 +359,15 @@ export class PedidoForm extends React.Component<PedidoFormProps, PedidoFormState
     };
 
     const newPedido = await MovimientosService.createPedido(enc);
+    //const newPedido = {movimiento_enc_id: 1, condicion_venta_id: 3};
 
-    const det: Array<IItem> = editablePedido.items.map(i => ({
+    const det: Array<IItem> = items.map(i => ({
       movimiento_enc_id: newPedido.movimiento_enc_id,
       envase_id: i.envase_id,
       cantidad: i.cantidad,
       monto: i.cantidad * i.monto
     }));
-
+    console.log('det', det);
     await MovimientosService.createMovimientoItems(newPedido.movimiento_enc_id, det);
 
     if (selectedTab === 1) {
@@ -425,7 +453,7 @@ export class PedidoForm extends React.Component<PedidoFormProps, PedidoFormState
 
   render() {
     const { nuevo } = this.props;
-    const { hojas, cliente, envases, clientes, choferes, comercio, canales, subzonas, loading, editarCliente, isAddingItem, selectedTab, selectedEnvio, controlError, condicionesVenta, pedidoConfirmado } = this.state;
+    const { hojas, tipos, cliente, envases, clientes, choferes, comercio, canales, subzonas, loading, editarCliente, isAddingItem, selectedTab, selectedEnvio, controlError, condicionesVenta, pedidoConfirmado } = this.state;
 
     const envasesOptions = envases.map(e => ({
       value: e.envase_id,
@@ -453,6 +481,11 @@ export class PedidoForm extends React.Component<PedidoFormProps, PedidoFormState
     const canalesOptions = canales.map(c => ({
       label: c.canal_nombre,
       value: c.canal_id
+    }));
+
+    const tiposOptions = tipos.map(t => ({
+      label: t.tipo_movimiento_nombre,
+      value: t.tipo_movimiento_id
     }));
 
     const filteredComercios = this.filterComercios();
@@ -655,6 +688,13 @@ export class PedidoForm extends React.Component<PedidoFormProps, PedidoFormState
                   )}
                 </div>
               </div>
+              {/*<div className={styles.row}>*/}
+              {/*  <FormDetail*/}
+              {/*    ref={this.formDetailRef}*/}
+              {/*    precios={this.state.precios}*/}
+              {/*    envases={envases.map(e => ({value: e.envase_id, label: e.envase_nombre}))}*/}
+              {/*  />*/}
+              {/*</div>*/}
               <div className={styles.row}>
                 <Select
                   size='small'
@@ -708,6 +748,15 @@ export class PedidoForm extends React.Component<PedidoFormProps, PedidoFormState
                     label={'Asignar a Chofer'}
                     placeholder={'Chofer...'}
                     value={this.getUpdatedPedido().hoja_ruta_id} options={hojasOptions}
+                    onChange={this.onFieldChange}
+                    className={styles.ItemSelectContainer}
+                  />
+                  <Select
+                    size='small'
+                    name='tipo_movimiento_id'
+                    label={'Tipo de Movimiento'}
+                    placeholder={'Tipo...'}
+                    value={this.getUpdatedPedido().tipo_movimiento_id} options={tiposOptions}
                     onChange={this.onFieldChange}
                     className={styles.ItemSelectContainer}
                   />

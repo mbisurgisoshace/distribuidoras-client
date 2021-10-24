@@ -26,9 +26,10 @@
 
   .SearchResults {
     top: 40px;
-    width: 550px;
+    width: 625px;
     z-index: 9999;
     overflow-y: auto;
+    overflow-x: hidden;
     max-height: 250px;
     border-radius: 3px;
     position: absolute;

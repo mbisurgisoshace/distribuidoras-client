@@ -21,3 +21,5 @@ export const ItemSelectContainer: string;
 export const ItemInputContainer: string;
 export const margin: string;
 export const newItem: string;
+export const Input: string;
+export const eliminar: string;

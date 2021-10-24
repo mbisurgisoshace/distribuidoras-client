@@ -13,6 +13,7 @@ import { Carga, CargaItem } from './Carga';
 import { Movimiento, MovimientoItem, UltimoPedidoView } from './Pedido';
 import { Comodato, ComodatoItem, UltimoComodatoView } from './Comodato';
 import { CondicionIva } from './CondicionIva';
+import { TipoMovimiento } from './TipoMovimiento';
 import { CondicionVenta } from './CondicionVenta';
 import { Zona, ZonaInput, Subzona } from './Zona';
 
@@ -44,6 +45,7 @@ export {
   ComodatoItem,
   CondicionVenta,
   MovimientoItem,
+  TipoMovimiento,
   MovimientoStock,
   UltimoPedidoView,
   UltimoComodatoView,

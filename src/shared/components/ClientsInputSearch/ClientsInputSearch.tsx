@@ -168,6 +168,7 @@ export const ClientsInputSearch = ({ clientes, onSelectClient }: ClientsInputSea
       />
       <div className={classnames(styles.SearchResults, isVisible ? styles.visible : styles.invisible)}>
         <div className={styles.SearchResultsHeader}>
+          <div style={{width: 75}}>Codigo</div>
           <div style={{width: 200}}>Razon Social</div>
           <div style={{width: 250}}>Domicilio</div>
           <div style={{width: 100}}>Telefono</div>
@@ -183,7 +184,8 @@ export const ClientsInputSearch = ({ clientes, onSelectClient }: ClientsInputSea
         >
           {({onSectionRendered, scrollToColumn, scrollToRow}) => (
             <List
-              width={550}
+              width={625}
+              //width={550}
               height={250}
               rowHeight={25}
               ref={searchResultRef}
