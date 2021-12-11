@@ -105,7 +105,14 @@ export class Sidebar extends React.Component<SidebarProps, SidebarState> {
 									menuitems={[
 										{ href: '/stock/control', title: 'Control', subgroup: 'control' },
 										{ href: '/stock/cierre', title: 'Cierre', subgroup: 'cierre' },
-										{ href: '/comercios/stock/new', title: 'Stock P.E', subgroup: 'stock-pe' }
+										{ href: '/stock/compra-producto', title: 'Compra Producto', subgroup: 'compra-producto' },
+										{ href: '/stock/venta-envase', title: 'Venta Envase', subgroup: 'venta-envase' },
+										{ href: '/stock/compra-envase', title: 'Compra Envase', subgroup: 'compra-envase' },
+										{ href: '/stock/reposicion-averia', title: 'Reposicion Averia', subgroup: 'reposicion-averia' },
+										{ href: '/stock/devolucion-averia', title: 'Devolucion Averia', subgroup: 'devolucion-averia' },
+										{ href: '/stock/donacion', title: 'Donacion', subgroup: 'donacion' },
+										{ href: '/stock/saldo-inicial', title: 'Saldo Inicial', subgroup: 'saldo-inicial' },
+										// { href: '/comercios/stock/new', title: 'Stock P.E', subgroup: 'stock-pe' }
 									]}
 									title="Stock"
 									group="/stock"

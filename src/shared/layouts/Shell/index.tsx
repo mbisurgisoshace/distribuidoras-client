@@ -33,6 +33,7 @@ import { Pedido } from '../../../Pedidos/components/Pedido';
 import { NewHoja } from '../../../Hojas/components/NewHoja';
 import { AllPrecios } from '../../../Precios/components/AllPrecios';
 import { AllFeriados } from '../../../Feriados/components/AllFeriados';
+import { StockForm } from '../../../Stock/components/StockForm';
 
 const AuthenticatedRoutes = enhanceWithHeader(() => (
   <React.Fragment>
@@ -65,6 +66,13 @@ const AuthenticatedRoutes = enhanceWithHeader(() => (
     <AuthenticatedRoute path='/reportes/mapa' exact component={ReporteMapa} />
     <AuthenticatedRoute path='/precios' exact component={AllPrecios} />
     <AuthenticatedRoute path='/feriados' exact component={AllFeriados} />
+    <AuthenticatedRoute path='/stock/compra-producto' exact component={() => <StockForm tipoMovimiento={'Compra Producto'} />} />
+    <AuthenticatedRoute path='/stock/venta-envase' exact component={() => <StockForm tipoMovimiento={'Venta Envase'} />} />
+    <AuthenticatedRoute path='/stock/compra-envase' exact component={() => <StockForm tipoMovimiento={'Compra Envase'} />} />
+    <AuthenticatedRoute path='/stock/donacion' exact component={() => <StockForm tipoMovimiento={'Donaciones'} />} />
+    <AuthenticatedRoute path='/stock/saldo-inicial' exact component={() => <StockForm tipoMovimiento={'Reposicion Averia'} />} />
+    <AuthenticatedRoute path='/stock/reposicion-averia' exact component={() => <StockForm tipoMovimiento={'Reposicion Averia'} />} />
+    <AuthenticatedRoute path='/stock/devolucion-averia' exact component={() => <StockForm tipoMovimiento={'Devolucion Averia'} />} />
   </React.Fragment>
 ));
 

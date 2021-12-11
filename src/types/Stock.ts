@@ -1,5 +1,5 @@
-type Modulo = 'Venta' | 'Stock';
-type TipoMovimiento = 'Venta Diaria' | 'Compra Producto' | 'Devolucion Averia' | 'Reposicion Averia' | 'Donaciones';
+export type Modulo = 'Venta' | 'Stock';
+export type TipoMovimiento = 'Venta Diaria' | 'Compra Producto' | 'Devolucion Averia' | 'Reposicion Averia' | 'Donaciones' | 'Compra Envase' | 'Venta Envase' | 'Saldo Inicial';
 
 export interface ColumnaStock {
   id?: number;
@@ -10,7 +10,7 @@ export interface ColumnaStock {
 
 export interface MovimientoStock {
   movimiento_stock_enc_id?: number;
-  hoja_ruta_id: number;
+  hoja_ruta_id?: number;
   fecha: string;
   tipo_movimiento: TipoMovimiento;
   modulo: Modulo;
@@ -19,7 +19,7 @@ export interface MovimientoStock {
 
 export interface MovimientoStockItem {
   movimiento_stock_det_id?: number;
-  movimiento_stock_enc_id: number;
+  movimiento_stock_enc_id?: number;
   envase_id: number;
   estado_envase_id: number;
   cantidad: number;

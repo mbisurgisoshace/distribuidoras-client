@@ -47,6 +47,7 @@ import SubzonasService from '../../../services/subzonas';
 import { FormDetail } from './FormDetail';
 import TiposMovimientoService from '../../../services/tiposMovimiento';
 import EstadosMovimientoService from '../../../services/estadosMovimiento';
+import toastNotify from '../../../shared/components/ToastNotification';
 
 type IEditable<T> = { [P in keyof T]?: T[P] };
 
@@ -261,104 +262,118 @@ export class PedidoForm extends React.Component<PedidoFormProps, PedidoFormState
   };
 
   onSubmit = async () => {
-    const { comercio, selectedTab, selectedEnvio, editablePedido } = this.state;
+    try {
+      const { comercio, selectedTab, selectedEnvio, editablePedido } = this.state;
 
-    if (selectedTab === 0 && selectedEnvio === 'dia' && this.props.nuevo) {
-      const fecha = moment().format('YYYY-MM-DD');
-      const fechaPedido = moment(editablePedido.fecha, 'DD/MM/YYYY').format('YYYY-MM-DD');
+      if (selectedTab === 0 && selectedEnvio === 'dia' && this.props.nuevo) {
+        const fecha = moment().format('YYYY-MM-DD');
+        const fechaPedido = moment(editablePedido.fecha, 'DD/MM/YYYY').format('YYYY-MM-DD');
 
-      if (fecha !== fechaPedido) {
-        this.setState({
-          controlError: 'La fecha del pedido tiene que ser igual a la fecha de hoy.'
-        });
-        return;
+        if (fecha !== fechaPedido) {
+          this.setState({
+            controlError: 'La fecha del pedido tiene que ser igual a la fecha de hoy.'
+          });
+          return;
+        }
       }
-    }
 
-    if (selectedTab === 0 && selectedEnvio === 'programado') {
-      const fecha = moment().format('YYYY-MM-DD');
-      const fechaPedido = moment(editablePedido.fecha, 'DD/MM/YYYY').format('YYYY-MM-DD');
+      if (selectedTab === 0 && selectedEnvio === 'programado') {
+        const fecha = moment().format('YYYY-MM-DD');
+        const fechaPedido = moment(editablePedido.fecha, 'DD/MM/YYYY').format('YYYY-MM-DD');
 
-      if (fecha === fechaPedido) {
-        this.setState({
-          controlError: 'La fecha del pedido tiene que ser mayor a la fecha de hoy.'
-        });
-        return;
+        if (fecha === fechaPedido) {
+          this.setState({
+            controlError: 'La fecha del pedido tiene que ser mayor a la fecha de hoy.'
+          });
+          return;
+        }
       }
-    }
 
-    if (selectedTab === 1) {
-      if (!comercio) {
-        this.setState({
-          controlError: 'Debe seleccionar un punto de entrega para el cliente.'
-        });
-        return;
+      if (selectedTab === 1) {
+        if (!comercio) {
+          this.setState({
+            controlError: 'Debe seleccionar un punto de entrega para el cliente.'
+          });
+          return;
+        }
       }
-    }
 
-    let items = [];
+      let items = [];
 
-    if (this.formDetailRef && this.formDetailRef.current) {
-      items = this.formDetailRef.current.getItems().filter(i => i.envase_id !== '').map(i => ({
-        movimiento_enc_id: i?.movimiento_enc_id,
-        movimiento_det_id: i?.movimiento_det_id,
-        envase_id: i.envase_id,
-        cantidad: numeral(i.cantidad).value() || 0,
-        monto: numeral(i.precio).value() || 0
-      }))
-    }
+      if (this.formDetailRef && this.formDetailRef.current) {
+        items = this.formDetailRef.current.getItems().filter(i => i.envase_id !== '').map(i => ({
+          movimiento_enc_id: i?.movimiento_enc_id,
+          movimiento_det_id: i?.movimiento_det_id,
+          envase_id: i.envase_id,
+          cantidad: numeral(i.cantidad).value() || 0,
+          monto: numeral(i.precio).value() || 0
+        }))
+      }
 
-    const enc: IPedido = {
-      visito: false,
-      vendio: false,
-      cliente_id: editablePedido.cliente_id,
-      hoja_ruta_id: editablePedido.hoja_ruta_id,
-      observaciones: editablePedido.observaciones,
-      condicion_venta_id: editablePedido.condicion_venta_id,
-      tipo_movimiento_id: editablePedido.tipo_movimiento_id,
-      estado_movimiento_id: editablePedido.estado_movimiento_id,
-      fecha: moment(editablePedido.fecha, 'DD/MM/YYYY').format('YYYY-MM-DD')
-    };
+      const enc: IPedido = {
+        visito: false,
+        vendio: false,
+        cliente_id: editablePedido.cliente_id,
+        hoja_ruta_id: editablePedido.hoja_ruta_id,
+        observaciones: editablePedido.observaciones,
+        condicion_venta_id: editablePedido.condicion_venta_id,
+        tipo_movimiento_id: editablePedido.tipo_movimiento_id,
+        estado_movimiento_id: editablePedido.estado_movimiento_id,
+        fecha: moment(editablePedido.fecha, 'DD/MM/YYYY').format('YYYY-MM-DD')
+      };
 
-    if (this.props.nuevo) {
-      const newPedido = await MovimientosService.createPedido(enc);
+      if (this.props.nuevo) {
+        const newPedido = await MovimientosService.createPedido(enc);
 
-      const det: Array<IItem> = items.map(i => ({
-        movimiento_enc_id: newPedido.movimiento_enc_id,
-        envase_id: i.envase_id,
-        cantidad: i.cantidad,
-        monto: i.cantidad * i.monto
-      }));
+        const det: Array<IItem> = items.map(i => ({
+          movimiento_enc_id: newPedido.movimiento_enc_id,
+          envase_id: i.envase_id,
+          cantidad: i.cantidad,
+          monto: i.cantidad * i.monto
+        }));
 
-      await MovimientosService.createMovimientoItems(newPedido.movimiento_enc_id, det);
+        await MovimientosService.createMovimientoItems(newPedido.movimiento_enc_id, det);
 
-      this.setState({
-        controlError: '',
-        editablePedido: {
-          ...editablePedido,
-          items: [],
-          tipo_movimiento_id: 2,
-          fecha: moment().format('DD-MM-YYYY')
-        },
-        pedidoGenerado: newPedido.movimiento_enc_id
-      });
-    } else {
-      const updatedPedido = await MovimientosService.updatePedido(enc, editablePedido.movimiento_enc_id);
-      console.log('updatedPedido', updatedPedido);
+        this.setState({
+          controlError: '',
+          editablePedido: {
+            ...editablePedido,
+            items: [],
+            tipo_movimiento_id: 2,
+            fecha: moment().format('DD-MM-YYYY')
+          },
+          pedidoGenerado: newPedido.movimiento_enc_id
+        });
 
-      const det: Array<IItem> = items.map(i => ({
-        movimiento_enc_id: updatedPedido.movimiento_enc_id,
-        movimiento_det_id: i?.movimiento_det_id,
-        envase_id: i.envase_id,
-        cantidad: i.cantidad,
-        monto: i.cantidad * i.monto
-      }));
+        toastNotify.success({
+          header: 'Pedido creado correctamente.'
+        })
+      } else {
+        const updatedPedido = await MovimientosService.updatePedido(enc, editablePedido.movimiento_enc_id);
+        console.log('updatedPedido', updatedPedido);
 
-      await MovimientosService.updateMovimientoItems(updatedPedido.movimiento_enc_id, det);
+        const det: Array<IItem> = items.map(i => ({
+          movimiento_enc_id: updatedPedido.movimiento_enc_id,
+          movimiento_det_id: i?.movimiento_det_id,
+          envase_id: i.envase_id,
+          cantidad: i.cantidad,
+          monto: i.cantidad * i.monto
+        }));
 
-      this.setState({
-        controlError: ''
-      });
+        await MovimientosService.updateMovimientoItems(updatedPedido.movimiento_enc_id, det);
+
+        this.setState({
+          controlError: ''
+        });
+
+        toastNotify.success({
+          header: 'Pedido actualizado correctamente.'
+        })
+      }
+    } catch (err) {
+      toastNotify.error({
+        header: 'Ha ocurrido un error.'
+      })
     }
   };
 

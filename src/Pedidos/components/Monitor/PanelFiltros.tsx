@@ -10,6 +10,7 @@ import CanalesService from '../../../services/canales';
 import { Button } from '../../../shared/components/Button';
 import EstadosMovimientoService from '../../../services/estadosMovimiento';
 import CondicionesVentaService from '../../../services/condicionesVenta';
+import TiposMovimientoService from '../../../services/tiposMovimiento';
 
 interface FiltrosProps {
   onSearch: (currFilter) => void;
@@ -19,6 +20,7 @@ interface FiltrosProps {
 
 interface FiltrosState {
   currFilter: any;
+  tipos: Array<any>;
   estados: Array<any>;
   canales: Array<Canal>;
   choferes: Array<Chofer>;
@@ -30,6 +32,7 @@ export class PanelFiltros extends React.Component<FiltrosProps, FiltrosState> {
     super(props);
 
     this.state = {
+      tipos: [],
       canales: [],
       estados: [],
       choferes: [],
@@ -44,10 +47,12 @@ export class PanelFiltros extends React.Component<FiltrosProps, FiltrosState> {
   async componentDidMount() {
     const canales = await CanalesService.getCanales();
     const choferes = await ChoferesService.getChoferes();
+    const tipos = await TiposMovimientoService.getTiposMovimiento();
     const estados = await EstadosMovimientoService.getEstadosMovimiento();
     const condiciones = await CondicionesVentaService.getCondicionesVenta();
 
     this.setState({
+      tipos,
       canales,
       estados,
       choferes,
@@ -74,7 +79,12 @@ export class PanelFiltros extends React.Component<FiltrosProps, FiltrosState> {
   };
 
   render() {
-    const { canales, estados, choferes, condiciones, currFilter } = this.state;
+    const { tipos, canales, estados, choferes, condiciones, currFilter } = this.state;
+
+    const tiposOptions = tipos.map(tip => ({
+      label: tip.tipo_movimiento_nombre,
+      value: tip.tipo_movimiento_id
+    }));
 
     const canalesOptions = canales.map(c => ({
       label: c.canal_nombre,
@@ -117,6 +127,15 @@ export class PanelFiltros extends React.Component<FiltrosProps, FiltrosState> {
               label={'Hasta'}
               value={currFilter.hasta}
               onChange={this.onFechaChange}
+            />
+            <Select
+              multiple
+              size={'small'}
+              name={'tipos'}
+              label={'Tipo Movimiento'}
+              options={tiposOptions}
+              onChange={this.onOptionChange}
+              value={currFilter.tipos || []}
             />
             <Select
               multiple

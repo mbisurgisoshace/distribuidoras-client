@@ -12,8 +12,10 @@ import EstadosMovimientoService from '../../../services/estadosMovimiento';
 import CondicionesVentaService from '../../../services/condicionesVenta';
 import HojasService from '../../../services/hojas';
 import { Select } from '../../../shared/components/Select';
+import TiposMovimientoService from '../../../services/tiposMovimiento';
 
 interface MonitorState {
+  tipos: Array<any>;
   hojas: Array<any>;
   pedidos: Array<any>;
   estados: Array<any>;
@@ -24,6 +26,7 @@ interface MonitorState {
     hoja_ruta_id: number;
     estado_movimiento_id: number;
     condicion_venta_id: number;
+    tipo_movimiento_id: number;
   };
 }
 
@@ -35,6 +38,7 @@ export class Monitor extends React.Component<any, MonitorState> {
     super(props);
 
     this.state = {
+      tipos: [],
       hojas: [],
       pedidos: [],
       estados: [],
@@ -42,7 +46,8 @@ export class Monitor extends React.Component<any, MonitorState> {
       actualizacionMasiva: {
         hoja_ruta_id: null,
         estado_movimiento_id: null,
-        condicion_venta_id: null
+        condicion_venta_id: null,
+        tipo_movimiento_id: null
       },
       isGeneracionRemitos: false,
       isActualizacionMasivOpen: false
@@ -51,11 +56,13 @@ export class Monitor extends React.Component<any, MonitorState> {
 
   async componentDidMount() {
     const hojas = await HojasService.getHojas();
+    const tipos = await TiposMovimientoService.getTiposMovimiento();
     const estados = await EstadosMovimientoService.getEstadosMovimiento();
     const condiciones = await CondicionesVentaService.getCondicionesVenta();
 
     this.setState({
       hojas,
+      tipos,
       estados,
       condiciones
     });
@@ -82,55 +89,68 @@ export class Monitor extends React.Component<any, MonitorState> {
       headerCheckboxSelectionFilteredOnly: true
     }, {
       sortable: true,
-      field: 'ClienteID',
-      headerName: 'Codigo',
+      field: 'TipoMovimientoNombre',
+      headerName: 'Tipo Movimiento',
       cellClass: 'no-border'
-    }, {
-      sortable: true,
-      field: 'Direccion',
-      headerName: 'Direccion',
-      cellClass: 'no-border'
-    }, {
-      sortable: true,
-      field: 'Fecha',
-      headerName: 'Fecha',
-      cellClass: 'no-border'
-    }, {
-      sortable: true,
-      field: 'CondicionVentaNombre',
-      headerName: 'Condicion Venta',
-      cellClass: 'no-border'
-    }, {
-      sortable: true,
-      field: 'EstadoMovimientoNombre',
-      headerName: 'Estado',
-      cellClass: 'no-border'
-    }, {
-      sortable: true,
-      field: 'ZonaNombre',
-      headerName: 'Zona',
-      cellClass: 'no-border'
-    }, {
-      sortable: true,
-      field: 'CanalNombre',
-      headerName: 'Canal',
-      cellClass: 'no-border'
-    }, {
-      sortable: true,
-      field: 'Monto',
-      headerName: 'Monto',
-      cellClass: 'no-border'
-    }, {
-      sortable: true,
-      field: 'Apellido',
-      headerName: 'Chofer',
-      cellClass: 'no-border'
-    }, {
-      sortable: true,
-      field: 'Observaciones',
-      headerName: 'Observaciones',
-      cellClass: 'no-border'
-    }];
+    },
+      {
+        sortable: true,
+        field: 'ClienteID',
+        headerName: 'Codigo',
+        cellClass: 'no-border'
+      }, {
+        sortable: true,
+        resizable: true,
+        field: 'Direccion',
+        headerName: 'Direccion',
+        cellClass: 'no-border'
+      }, {
+        sortable: true,
+        field: 'Fecha',
+        headerName: 'Fecha',
+        cellClass: 'no-border'
+      }, {
+        sortable: true,
+        resizable: true,
+        field: 'CondicionVentaNombre',
+        headerName: 'Condicion Venta',
+        cellClass: 'no-border'
+      }, {
+        sortable: true,
+        resizable: true,
+        field: 'EstadoMovimientoNombre',
+        headerName: 'Estado',
+        cellClass: 'no-border'
+      }, {
+        sortable: true,
+        resizable: true,
+        field: 'ZonaNombre',
+        headerName: 'Zona',
+        cellClass: 'no-border'
+      }, {
+        sortable: true,
+        resizable: true,
+        field: 'CanalNombre',
+        headerName: 'Canal',
+        cellClass: 'no-border'
+      }, {
+        sortable: true,
+        field: 'Monto',
+        headerName: 'Monto',
+        cellClass: 'no-border'
+      }, {
+        sortable: true,
+        resizable: true,
+        field: 'Apellido',
+        headerName: 'Chofer',
+        cellClass: 'no-border'
+      }, {
+        sortable: true,
+        resizable: true,
+        field: 'Observaciones',
+        headerName: 'Observaciones',
+        cellClass: 'no-border'
+      }];
   };
 
   onGridReady = (params) => {
@@ -181,17 +201,24 @@ export class Monitor extends React.Component<any, MonitorState> {
       actualizacionMasiva: {
         hoja_ruta_id: null,
         estado_movimiento_id: null,
-        condicion_venta_id: null
+        condicion_venta_id: null,
+        tipo_movimiento_id: null
       },
       isActualizacionMasivOpen: false
-    })
-
-    console.log('idsPedidos', idsPedidos);
-    console.log('actualizaciones', actualizaciones);
+    });
   };
 
   render() {
-    const { pedidos, isGeneracionRemitos, isActualizacionMasivOpen, hojas, estados, condiciones, actualizacionMasiva } = this.state;
+    const {
+      tipos,
+      pedidos,
+      isGeneracionRemitos,
+      isActualizacionMasivOpen,
+      hojas,
+      estados,
+      condiciones,
+      actualizacionMasiva
+    } = this.state;
 
     const hojasOptions = hojas.map(hoj => ({
       label: `${hoj.apellido}, ${hoj.nombre}`,
@@ -206,6 +233,11 @@ export class Monitor extends React.Component<any, MonitorState> {
     const condicionesOptions = condiciones.map(con => ({
       label: con.condicion_venta_nombre,
       value: con.condicion_venta_id
+    }));
+
+    const tiposOptions = tipos.map(tip => ({
+      label: tip.tipo_movimiento_nombre,
+      value: tip.tipo_movimiento_id
     }));
 
     return (
@@ -247,7 +279,8 @@ export class Monitor extends React.Component<any, MonitorState> {
               actualizacionMasiva: {
                 hoja_ruta_id: null,
                 estado_movimiento_id: null,
-                condicion_venta_id: null
+                condicion_venta_id: null,
+                tipo_movimiento_id: null
               }
             })}
             size='medium'
@@ -291,6 +324,20 @@ export class Monitor extends React.Component<any, MonitorState> {
                 actualizacionMasiva: {
                   ...actualizacionMasiva,
                   condicion_venta_id: e.target.value
+                }
+              })}
+            />
+            <Select
+              size='small'
+              label='Tipo de Movimiento'
+              name='tipo_movimiento_id'
+              placeholder='Seleccionar...'
+              value={actualizacionMasiva.tipo_movimiento_id}
+              options={tiposOptions}
+              onChange={(e) => this.setState({
+                actualizacionMasiva: {
+                  ...actualizacionMasiva,
+                  tipo_movimiento_id: e.target.value
                 }
               })}
             />

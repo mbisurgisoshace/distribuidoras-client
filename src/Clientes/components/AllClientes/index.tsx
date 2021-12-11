@@ -48,7 +48,7 @@ export class AllClientes extends React.Component<any, AllClientesState> {
     const { cliente_id } = e.data;
 
     if (cliente_id) {
-      window.open(`/clientes/${cliente_id}`, '_blank');
+      window.open(`/clientes/${cliente_id}`);
     }
   };
 
