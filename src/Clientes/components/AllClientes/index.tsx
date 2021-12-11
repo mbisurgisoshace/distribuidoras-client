@@ -11,6 +11,7 @@ import ClientesService from '../../../services/clientes';
 import { Button } from '../../../shared/components/Button';
 import { LoadingIndicator } from '../../../shared/components/LoadingIndicator';
 import TangoService from '../../../services/tango';
+import { Link } from 'react-router-dom';
 
 interface AllClientesState {
   loading: boolean;
@@ -116,6 +117,10 @@ export class AllClientes extends React.Component<any, AllClientesState> {
         <div className={styles.AllClientes}>
           <div className={styles.AllClientesWrapper}>
             <div style={{marginBottom: 5, display: 'flex', justifyContent: 'flex-end'}}>
+              <Link to={'/clientes/new'}>
+                <Button size={'tiny'}>Nuevo Cliente</Button>
+              </Link>
+              <div style={{marginRight: 5}} />
               {!syncing && <Button size={'tiny'} onClick={this.onSyncClientes}>Sincronizar Clientes</Button>}
               {syncing && <LoadingIndicator size={'small'} />}
             </div>

@@ -9,6 +9,7 @@
     padding: 0.5rem;
     align-items: center;
     flex-direction: column;
+    justify-content: space-between;
 
     .FiltrosItem {
       h3 {

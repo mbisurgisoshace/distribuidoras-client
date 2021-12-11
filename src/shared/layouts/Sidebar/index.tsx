@@ -55,6 +55,8 @@ export class Sidebar extends React.Component<SidebarProps, SidebarState> {
 								<SidebarMenu
 									menuitems={[
 										{ href: '/clientes', title: 'Clientes', subgroup: 'clientes' },
+										{ href: '/precios', title: 'Precios', subgroup: 'precios' },
+										{ href: '/feriados', title: 'Feriados', subgroup: 'feriados' },
 										{ href: '/comercios', title: 'Puntos Entrega', subgroup: 'comercios' },
 										// { href: '/tablas/zonas', title: 'Zonas', subgroup: 'zonas' },
 										// { href: '/tablas/agregar', title: 'Ventas', subgroup: 'ventas' },
@@ -80,7 +82,7 @@ export class Sidebar extends React.Component<SidebarProps, SidebarState> {
 									menuitems={[
 										{ href: '/hojas', title: 'Hojas de Ruta', subgroup: 'hojas' },
 										{ href: '/pedidos/new', title: 'Nuevo Pedido', subgroup: 'pedidos' },
-										{ href: '/comercios/entregas', title: 'Monitor Entregas', subgroup: 'entregas' },
+										{ href: '/pedidos', title: 'Monitor Pedidos', subgroup: 'monitor' },
 										// { href: '/ventas/agregar', title: 'Movimientos', subgroup: 'movimientos' },
 										// { href: '/ventas/eliminar', title: 'Remitos', subgroup: 'remitos' },
 										// { href: '/ventas/eliminar', title: 'Cierre Diario', subgroup: 'cierre' }

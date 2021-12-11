@@ -5,6 +5,7 @@ export default class ClientesService extends BaseService {
   static clientesRoute = '/clientes';
   static clientesSearchRoute = '/clientes/search'
   static clienteRoute = '/clientes/{cliente_id}';
+  static clientesPlantillaRoute = '/clientes/plantilla';
   static clientesCanalRoute = '/clientes/canal/{canal_id}';
   static lastClienteRoute = '/clientes/last';
   static lastPedidoClienteRoute = '/clientes/{cliente_id}/last';
@@ -16,6 +17,13 @@ export default class ClientesService extends BaseService {
 
   public static async getCliente(id: number): Promise<ICliente> {
     return await this.getRequest<ICliente>(this.buildRoute(this.clienteRoute, { cliente_id: id }));
+  }
+
+  public static async getClientesPlantilla(zonaId: number, diaSemana: string): Promise<Array<ICliente>> {
+    return await this.getRequest<Array<ICliente>>(this.buildQueryRoute(this.clientesPlantillaRoute, {
+      zonaId,
+      diaSemana
+    }));
   }
 
   public static async searchClientes(filters): Promise<Array<any>> {

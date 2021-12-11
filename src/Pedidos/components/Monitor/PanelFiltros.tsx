@@ -13,6 +13,8 @@ import CondicionesVentaService from '../../../services/condicionesVenta';
 
 interface FiltrosProps {
   onSearch: (currFilter) => void;
+  onGeneracionRemitos: () => void;
+  onActualizacionMasiva: () => void;
 }
 
 interface FiltrosState {
@@ -73,7 +75,6 @@ export class PanelFiltros extends React.Component<FiltrosProps, FiltrosState> {
 
   render() {
     const { canales, estados, choferes, condiciones, currFilter } = this.state;
-    console.log('currFilter', currFilter);
 
     const canalesOptions = canales.map(c => ({
       label: c.canal_nombre,
@@ -97,68 +98,85 @@ export class PanelFiltros extends React.Component<FiltrosProps, FiltrosState> {
 
     return (
       <div className={styles.PanelFiltros}>
-        <div className={styles.FiltrosItem}>
-          <DatePicker
-            fluid
-            fixedLabel
-            name={'desde'}
+        <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+          <div className={styles.FiltrosItem}>
+            <DatePicker
+              fluid
+              fixedLabel
+              name={'desde'}
+              size={'small'}
+              label={'Desde'}
+              value={currFilter.desde}
+              onChange={this.onFechaChange}
+            />
+            <DatePicker
+              fluid
+              fixedLabel
+              name={'hasta'}
+              size={'small'}
+              label={'Hasta'}
+              value={currFilter.hasta}
+              onChange={this.onFechaChange}
+            />
+            <Select
+              multiple
+              size={'small'}
+              name={'chofer'}
+              label={'Chofer'}
+              options={choferesptions}
+              onChange={this.onOptionChange}
+              value={currFilter.chofer || []}
+            />
+            <Select
+              multiple
+              size={'small'}
+              name={'estado'}
+              label={'Estado'}
+              options={estadosOptions}
+              onChange={this.onOptionChange}
+              value={currFilter.estado || []}
+            />
+            <Select
+              multiple
+              size={'small'}
+              name={'canal'}
+              label={'Canal'}
+              options={canalesOptions}
+              onChange={this.onOptionChange}
+              value={currFilter.canal || []}
+            />
+            <Select
+              multiple
+              size={'small'}
+              name={'condicion'}
+              label={'Condicion Venta'}
+              options={condicionesOptions}
+              onChange={this.onOptionChange}
+              value={currFilter.condicion || []}
+            />
+          </div>
+          <Button
             size={'small'}
-            label={'Desde'}
-            value={currFilter.desde}
-            onChange={this.onFechaChange}
-          />
-          <DatePicker
-            fluid
-            fixedLabel
-            name={'hasta'}
-            size={'small'}
-            label={'Hasta'}
-            value={currFilter.hasta}
-            onChange={this.onFechaChange}
-          />
-          <Select
-            multiple
-            size={'small'}
-            name={'chofer'}
-            label={'Chofer'}
-            options={choferesptions}
-            onChange={this.onOptionChange}
-            value={currFilter.chofer || []}
-          />
-          <Select
-            multiple
-            size={'small'}
-            name={'estado'}
-            label={'Estado'}
-            options={estadosOptions}
-            onChange={this.onOptionChange}
-            value={currFilter.estado || []}
-          />
-          <Select
-            multiple
-            size={'small'}
-            name={'canal'}
-            label={'Canal'}
-            options={canalesOptions}
-            onChange={this.onOptionChange}
-            value={currFilter.canal || []}
-          />
-          <Select
-            multiple
-            size={'small'}
-            name={'condicion'}
-            label={'Condicion Venta'}
-            options={condicionesOptions}
-            onChange={this.onOptionChange}
-            value={currFilter.condicion || []}
-          />
+            onClick={() => this.props.onSearch(currFilter)}
+          >
+            Filtrar
+          </Button>
         </div>
-        <Button
-          size={'small'}
-          onClick={() => this.props.onSearch(currFilter)}
-        >
-          Filtrar
-        </Button>
+        <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '2rem'}}>
+          <Button
+            size={'small'}
+            onClick={() => this.props.onGeneracionRemitos()}
+          >
+            Generacion Remitos
+          </Button>
+          <div style={{height: 10}} />
+          <Button
+            size={'small'}
+            onClick={() => this.props.onActualizacionMasiva()}
+          >
+            Actualizacion Masiva
+          </Button>
+        </div>
       </div>
     );
   }

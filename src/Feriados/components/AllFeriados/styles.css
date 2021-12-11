@@ -1,0 +1,89 @@
+@import 'fonts';
+@import 'colors';
+
+
+.AllFeriados {
+    width: 100%;
+      padding: 2rem;
+      background-color: $color-greyscale-lightest;
+}
+
+.AllFeriadosWrapper {
+  height: 100%;
+  display: flex;
+  padding: 10px;
+  background-color: $color-white;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.16);
+  border-radius: 5px;
+/*   flex-wrap: wrap; */
+  width: 1440px;
+  flex-direction: column;
+  box-sizing: border-box;
+  margin: 0 auto;
+  position: relative;
+}
+
+.DetalleWrapper {
+      width: 100%;
+      min-height: 300px;
+
+      .DetalleWrapperHeader {
+              display: flex;
+              align-items: center;
+              margin-bottom: 0.5rem;
+              justify-content: space-between;
+
+              h3 {
+                        margin: 0;
+                        font-size: 1rem;
+                        color: $color-greyscale-darker;
+                        font-family: $font-family-secondary;
+                      }
+
+                      :not(:last-child) {
+                        margin-right: 1rem;
+                      }
+      }
+
+      .row.ItemWrapper {
+              display: flex;
+              padding: 0.5rem;
+/*               align-items: center; */
+
+              svg {
+                width: 15px;
+                height: 15px;
+              }
+            }
+
+            .row {
+                    :not(:last-child) {
+                      margin-right: 10px;
+                    }
+                  }
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+}
+
+.Icons {
+  width: 20px;
+  height: 20px;
+  fill: $color-primary;
+
+  &:hover {
+    cursor: pointer;
+  }
+}
+
+.Input {
+  margin: 0 !important;
+}
+
+.Input:focus {
+  outline-width: 1px;
+  outline-style: solid;
+  outline-color: #2684ff;
+}

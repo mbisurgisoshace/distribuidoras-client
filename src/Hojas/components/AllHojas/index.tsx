@@ -9,6 +9,8 @@ import { RoutedOuterWrapper as OuterWrapper } from '../../../shared/layouts/Oute
 
 import HojasService from '../../../services/hojas';
 import { AgGridReact } from 'ag-grid-react';
+import { Button } from '../../../shared/components/Button';
+import { Link } from 'react-router-dom';
 
 interface AllHojasState {
   loading: boolean;
@@ -107,6 +109,11 @@ export class AllHojas extends React.Component<any, AllHojasState> {
       <OuterWrapper>
         <div className={styles.AllHojas}>
           <div className={styles.AllHojasWrapper}>
+            <div style={{marginBottom: 5, display: 'flex', justifyContent: 'flex-end', width: '100%'}}>
+              <Link to={'/hojas/new'}>
+                <Button size={'tiny'}>Abrir Hoja</Button>
+              </Link>
+            </div>
             <div className="ag-theme-balham" style={{ height: '100%', width: '100%' }}>
               <AgGridReact
                 pagination={true}

@@ -3,6 +3,7 @@ import { flatten } from 'lodash';
 import * as moment from 'moment';
 import * as numeral from 'numeral';
 import * as classnames from 'classnames';
+import { AgGridReact } from 'ag-grid-react';
 import { Link, Redirect } from 'react-router-dom';
 
 import * as styles from './styles.css';
@@ -21,7 +22,7 @@ import {
   Camion as ICamion,
   CargaItem as ICarga,
   Movimiento as IMovimiento,
-  CondicionVenta as ICondicionVenta
+  CondicionVenta as ICondicionVenta, Cliente
 } from '../../../types';
 
 import ZonasService from '../../../services/zonas';
@@ -33,12 +34,25 @@ import CondicionesVentaService from '../../../services/condicionesVenta';
 import HojasService from '../../../services/hojas';
 import { Checkbox } from '../../../shared/components/Checkbox';
 import CargasService from '../../../services/cargas';
+import ClientesService from '../../../services/clientes';
 
 type IEditable<T> = { [P in keyof T]?: T[P] };
+
+const diasMapper = {
+  'Monday': 'lunes',
+  'Tuesday': 'martes',
+  'Wednesday': 'miércoles',
+  'Thursday': 'jueves',
+  'Friday': 'viernes',
+  'Saturday': 'sábado',
+  'Sunday': 'domingo'
+}
+
 
 interface HojaFormProps {
   nuevo?: boolean;
   hoja?: IHoja
+  onNueva?: () => void;
 }
 
 interface HojaFormState {
@@ -46,6 +60,8 @@ interface HojaFormState {
   cargas: Array<ICarga>;
   choferes: Array<IChofer>;
   camiones: Array<ICamion>;
+  clientes: Array<Cliente>
+  isPreRuteosModalOpen: boolean;
   editableHoja: IEditable<IHoja>;
   movimientos: Array<IMovimiento>;
   condiciones: Array<ICondicionVenta>;
@@ -61,12 +77,16 @@ interface HojaFormState {
 }
 
 export class HojaForm extends React.Component<HojaFormProps, HojaFormState> {
+  gridApi;
+  gridColumnApi;
+
   constructor(props) {
     super(props);
 
     this.state = {
       zonas: [],
       cargas: [],
+      clientes: [],
       camiones: [],
       choferes: [],
       movimientos: [],
@@ -74,6 +94,7 @@ export class HojaForm extends React.Component<HojaFormProps, HojaFormState> {
       editableHoja: {},
       loading: true,
       showDetalle: false,
+      isPreRuteosModalOpen: false,
       checks: {
         checkStock: true,
         checkPedidos: true,
@@ -85,13 +106,22 @@ export class HojaForm extends React.Component<HojaFormProps, HojaFormState> {
   }
 
   async componentDidMount() {
+    let items = [];
+    let cargas = [];
+    let movimientos = [];
+    let editableHoja: IEditable<IHoja> = {};
     const zonas = await ZonasService.getZonas();
     const choferes = await ChoferesService.getChoferes();
     const camiones = await CamionesService.getCamiones();
     const condiciones = await CondicionesVentaService.getCondicionesVenta();
-    const cargas = await CargasService.getCargasByHoja(this.props.hoja.hoja_ruta_id)
-    const movimientos = await MovimientosService.getMovimientosByHoja(this.props.hoja.hoja_ruta_id);
-    const items = flatten(cargas.map(c => c.items));
+
+    if (!this.props.nuevo) {
+      cargas = await CargasService.getCargasByHoja(this.props.hoja.hoja_ruta_id)
+      movimientos = await MovimientosService.getMovimientosByHoja(this.props.hoja.hoja_ruta_id);
+      items = flatten(cargas.map(c => c.items));
+    } else {
+      editableHoja.fecha = moment().utc().toISOString();
+    }
 
     this.setState({
       zonas,
@@ -99,13 +129,23 @@ export class HojaForm extends React.Component<HojaFormProps, HojaFormState> {
       camiones,
       condiciones,
       movimientos,
+      editableHoja,
       cargas: items,
       loading: false
     });
   }
 
-  onFieldChange = (e) => {
+  onFieldChange = async (e) => {
     const { editableHoja = {} } = this.state;
+    if (this.props.nuevo && e.target.name === 'zona_id') {
+      const diaSemana = diasMapper[moment(editableHoja.fecha).format('dddd')];
+      const clientes = await ClientesService.getClientesPlantilla(parseInt(e.target.value), diaSemana);
+      this.setState({
+        clientes,
+        isPreRuteosModalOpen: true
+      })
+    }
+
     this.setState({
       editableHoja: {
         ...editableHoja,
@@ -187,6 +227,43 @@ export class HojaForm extends React.Component<HojaFormProps, HojaFormState> {
     );
   };
 
+  onAbrir = async () => {
+    const { editableHoja } = this.state;
+
+
+    try {
+      this.setState({
+        loading: true
+      });
+
+      const newHoja = await HojasService.createHoja({
+        ...this.getUpdatedHoja(),
+        km_final: 0,
+        km_inicial: editableHoja.km_inicial || 0,
+        estado: true,
+        cierre_stock: false,
+        control_stock: false,
+        cierre_mobile: false,
+        fecha: moment(editableHoja.fecha).format('YYYY-MM-DD')
+      });
+
+      const movimientosEnc = this.state.movimientos.map(m => ({
+        ...m,
+        hoja_ruta_id: newHoja.hoja_ruta_id
+      }))
+
+      await HojasService.createMovimientosHoja(newHoja.hoja_ruta_id, movimientosEnc);
+
+      this.setState({
+        loading: false,
+      });
+
+      this.props.onNueva();
+    } catch (err) {
+      console.log('err', err);
+    }
+  }
+
   onSubmit = async (cerrar: boolean) => {
     this.setState({
       loading: true
@@ -224,8 +301,72 @@ export class HojaForm extends React.Component<HojaFormProps, HojaFormState> {
     }
   };
 
+  getColumns = () => {
+    return [{
+      filter: true,
+      sortable: true,
+      field: 'cliente_id',
+      headerName: 'Codigo',
+      cellClass: 'no-border',
+      checkboxSelection: true,
+      headerCheckboxSelection: true,
+      headerCheckboxSelectionFilteredOnly: true
+    }, {
+      filter: true,
+      sortable: true,
+      field: 'razon_social',
+      headerName: 'Razon Social',
+      cellClass: 'no-border'
+    }, {
+      filter: true,
+      sortable: true,
+      field: 'calle',
+      headerName: 'Calle',
+      cellClass: 'no-border'
+    }, {
+      filter: true,
+      sortable: true,
+      field: 'altura',
+      headerName: 'Altura',
+      cellClass: 'no-border'
+    }, {
+      filter: true,
+      sortable: true,
+      field: 'telefono',
+      headerName: 'Telefono',
+      cellClass: 'no-border'
+    }];
+  };
+
+
+  onGridReady = (params) => {
+    this.gridApi = params.api;
+    this.gridColumnApi = params.columnApi;
+
+    this.gridApi.sizeColumnsToFit();
+  };
+
+  onAddPedidos = () => {
+    const { editableHoja } = this.state;
+
+    const movimientosEnc = this.gridApi.getSelectedNodes().map(selection => ({
+      visito: false,
+      vendio: false,
+      tipo_movimiento_id: 1,
+      estado_movimiento_id: 1,
+      fecha: moment(editableHoja.fecha).format('YYYY-MM-DD'),
+      cliente_id: selection.data.cliente_id,
+      condicion_venta_id: selection.data.condicion_venta_id
+    }))
+
+    this.setState({
+      movimientos: movimientosEnc,
+      isPreRuteosModalOpen: false
+    })
+  }
+
   render() {
-    const { zonas, choferes, camiones, showDetalle, loading, movimientos, entregaComodatos } = this.state;
+    const { zonas, choferes, camiones, showDetalle, loading, movimientos, entregaComodatos, clientes, isPreRuteosModalOpen } = this.state;
 
     const zonasOptions = zonas.map(z => ({
       label: z.zona_nombre,
@@ -254,6 +395,10 @@ export class HojaForm extends React.Component<HojaFormProps, HojaFormState> {
             </div>
             <Input size='small' label='Fecha' name='fecha' onChange={this.onFieldChange}
                    value={moment(this.getUpdatedHoja().fecha).format('DD/MM/YYYY')} disabled/>
+            {this.props.nuevo && (
+              <Input size='small' label='Nro Hoja' name='hoja_ruta_numero' onChange={this.onFieldChange}
+                     value={this.getUpdatedHoja().hoja_ruta_numero}/>
+            )}
             <Select size='small' label='Zona' name='zona_id' placeholder='Seleccionar...'
                     value={this.getUpdatedHoja().zona_id}
                     options={zonasOptions} onChange={this.onFieldChange}/>
@@ -267,16 +412,18 @@ export class HojaForm extends React.Component<HojaFormProps, HojaFormState> {
                     value={this.getUpdatedHoja().camion_id}
                     options={camionesOptions} onChange={this.onFieldChange}/>
             <Checkbox checked={entregaComodatos} name={'comodatos'} onChange={() => this.setState({entregaComodatos: !entregaComodatos})}>Entrega Comodatos</Checkbox>
-            <div className={styles.EstadosWrapper}>
-              <div
-                className={classnames(styles.HojaEstado, this.getEstadoStock().style)}>
-                {this.getEstadoStock().label}
+            {!this.props.nuevo && (
+              <div className={styles.EstadosWrapper}>
+                <div
+                  className={classnames(styles.HojaEstado, this.getEstadoStock().style)}>
+                  {this.getEstadoStock().label}
+                </div>
+                <div
+                  className={classnames(styles.HojaEstado, this.getUpdatedHoja().estado ? styles.activo : styles.inactivo)}>
+                  {this.getUpdatedHoja().estado ? 'Abierta' : 'Cerrada'}
+                </div>
               </div>
-              <div
-                className={classnames(styles.HojaEstado, this.getUpdatedHoja().estado ? styles.activo : styles.inactivo)}>
-                {this.getUpdatedHoja().estado ? 'Abierta' : 'Cerrada'}
-              </div>
-            </div>
+            )}
           </div>
           <div className={styles.HojaInfo}>
             <div className={styles.row}>
@@ -379,14 +526,23 @@ export class HojaForm extends React.Component<HojaFormProps, HojaFormState> {
                 </div>
               </div>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'flex-end' }} className={styles.ButtonsWrapper}>
-              <Button size='small' outline onClick={() => this.onSubmit(false)} disabled={!this.getUpdatedHoja().estado}>
-                Guardar
-              </Button>
-              <Button size='small' type='primary' onClick={() => this.onSubmit(true)} disabled={!this.getUpdatedHoja().estado}>
-                Cerrar
-              </Button>
-            </div>
+            {!this.props.nuevo && (
+              <div style={{ display: 'flex', justifyContent: 'flex-end' }} className={styles.ButtonsWrapper}>
+                <Button size='small' outline onClick={() => this.onSubmit(false)} disabled={!this.getUpdatedHoja().estado}>
+                  Guardar
+                </Button>
+                <Button size='small' type='primary' onClick={() => this.onSubmit(true)} disabled={!this.getUpdatedHoja().estado}>
+                  Cerrar
+                </Button>
+              </div>
+            )}
+            {this.props.nuevo && (
+              <div style={{ display: 'flex', justifyContent: 'flex-end' }} className={styles.ButtonsWrapper}>
+                <Button size='small' type='primary' onClick={this.onAbrir}>
+                  Abrir
+                </Button>
+              </div>
+            )}
           </div>
           <Modal
             show={showDetalle}
@@ -394,6 +550,27 @@ export class HojaForm extends React.Component<HojaFormProps, HojaFormState> {
             size='fit'
           >
             {this.renderCondiciones()}
+          </Modal>
+          <Modal
+            showCancel={true}
+            headerText={'Pre Ruteos'}
+            show={isPreRuteosModalOpen}
+            onOk={() => this.onAddPedidos()}
+            onCancel={() => this.setState({isPreRuteosModalOpen: false})}
+            size='large'
+          >
+            <div className='ag-theme-balham' style={{ flex: 1, width: '100%', height: '100%' }}>
+              <AgGridReact
+                pagination={true}
+                rowData={clientes}
+                rowSelection={'multiple'}
+                columnDefs={this.getColumns()}
+                onGridReady={this.onGridReady}
+                suppressCellSelection={true}
+                suppressRowClickSelection={true}
+              />
+
+            </div>
           </Modal>
         </div>
       </div>

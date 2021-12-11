@@ -312,29 +312,31 @@ export class ClienteForm extends React.Component<ClienteFormProps, ClienteFormSt
                 </div>
                 <div className={styles.UltimoPedido}>
                   <div className={styles.UltimoPedidoTitulo}>Ultimo Pedido</div>
-                  <div className={styles.UltimoPedidoNumero}>
-                    <span>#</span>
-                    <Link to={`/pedidos/${ultimoPedido.pedido_id}`} target='_blank'>
-                      {ultimoPedido.pedido_id}
-                      <div className={styles.UltimoPedidoResumen}>
-                        <div className={styles.header}>
-                          <div style={{ width: '45px' }}>Cod</div>
-                          <div style={{ width: '150px' }}>Producto</div>
-                          <div style={{ width: '45px' }}>Cant</div>
-                          <div style={{ width: '60px' }}>Precio</div>
-                        </div>
-                        {ultimoPedido.items.map(i => (
-                          <div className={styles.data}>
-                            <div style={{ width: '45px' }}>{i.envase_codigo}</div>
-                            <div style={{ width: '150px' }}>{i.envase_nombre}</div>
-                            <div style={{ width: '45px', textAlign: 'center' }}>{i.cantidad}</div>
-                            <div
-                              style={{ width: '60px', textAlign: 'right' }}>{numeral(i.precio).format('$0,0.00')}</div>
+                  {ultimoPedido && (
+                    <div className={styles.UltimoPedidoNumero}>
+                      <span>#</span>
+                      <Link to={`/pedidos/${ultimoPedido.pedido_id}`} target='_blank'>
+                        {ultimoPedido.pedido_id}
+                        <div className={styles.UltimoPedidoResumen}>
+                          <div className={styles.header}>
+                            <div style={{ width: '45px' }}>Cod</div>
+                            <div style={{ width: '150px' }}>Producto</div>
+                            <div style={{ width: '45px' }}>Cant</div>
+                            <div style={{ width: '60px' }}>Precio</div>
                           </div>
-                        ))}
-                      </div>
-                    </Link>
-                  </div>
+                          {ultimoPedido.items.map(i => (
+                            <div className={styles.data}>
+                              <div style={{ width: '45px' }}>{i.envase_codigo}</div>
+                              <div style={{ width: '150px' }}>{i.envase_nombre}</div>
+                              <div style={{ width: '45px', textAlign: 'center' }}>{i.cantidad}</div>
+                              <div
+                                style={{ width: '60px', textAlign: 'right' }}>{numeral(i.precio).format('$0,0.00')}</div>
+                            </div>
+                          ))}
+                        </div>
+                      </Link>
+                    </div>
+                  )}
                   <div
                     className={styles.UltimoPedidoFecha}>{moment(this.getUpdatedCliente().fecha_ultima_compra).format('DD/MM/YYYY')}</div>
                 </div>

@@ -46,6 +46,7 @@ import CanalesService from '../../../services/canales';
 import SubzonasService from '../../../services/subzonas';
 import { FormDetail } from './FormDetail';
 import TiposMovimientoService from '../../../services/tiposMovimiento';
+import EstadosMovimientoService from '../../../services/estadosMovimiento';
 
 type IEditable<T> = { [P in keyof T]?: T[P] };
 
@@ -76,6 +77,7 @@ interface PedidoFormState {
   tipos: Array<ITipoMovimiento>;
   editableItem: IEditable<IItem>;
   editablePedido: IEditable<IPedido>;
+  estadosMovimiento: Array<any>;
   condicionesVenta: Array<ICondicionVenta>;
 }
 
@@ -109,7 +111,8 @@ export class PedidoForm extends React.Component<PedidoFormProps, PedidoFormState
       editarCliente: false,
       pedidoGenerado: null,
       condicionesVenta: [],
-      pedidoConfirmado: false
+      pedidoConfirmado: false,
+      estadosMovimiento: []
     };
   }
 
@@ -122,12 +125,15 @@ export class PedidoForm extends React.Component<PedidoFormProps, PedidoFormState
     const tipos = await TiposMovimientoService.getTiposMovimiento();
     const comercios = await ComerciosService.getComercios(true);
     const condicionesVenta = await CondicionesVentaService.getCondicionesVenta();
+    const estadosMovimiento = await EstadosMovimientoService.getEstadosMovimiento();
     const hojas = await HojasService.getHojasByFecha(moment().format('YYYY-MM-DD'));
 
     document.addEventListener('keypress', this.handleKeyPress);
 
     if (this.props.nuevo) {
       await this.createNewPedido();
+    } else {
+      await this.setPedido(clientes);
     }
 
     this.setState({
@@ -140,7 +146,8 @@ export class PedidoForm extends React.Component<PedidoFormProps, PedidoFormState
       choferes,
       loading: false,
       comercios,
-      condicionesVenta
+      condicionesVenta,
+      estadosMovimiento
     });
   }
 
@@ -165,10 +172,29 @@ export class PedidoForm extends React.Component<PedidoFormProps, PedidoFormState
         ...editablePedido,
         items: [],
         tipo_movimiento_id: 2,
+        estado_movimiento_id: 2,
         fecha: moment().format('DD-MM-YYYY')
       }
     });
   };
+
+  setPedido = async (clientes) => {
+    let precios = [];
+    const cliente = clientes.find(cliente => cliente.cliente_id === this.props.pedido.cliente_id);
+
+    if (cliente) {
+      precios = await PreciosService.getListaPrecio(cliente.lista_precio_id);
+    }
+
+    this.setState({
+      cliente,
+      precios,
+      editablePedido: {
+        ...this.props.pedido,
+        fecha: moment(this.props.pedido.fecha).utc().format('DD-MM-YYYY')
+      }
+    })
+  }
 
   onClientSelected = async (cliente) => {
     const { editablePedido } = this.state;
@@ -234,70 +260,10 @@ export class PedidoForm extends React.Component<PedidoFormProps, PedidoFormState
     }
   };
 
-  onItemFieldChange = (e, index = null) => {
-    let { editableItem = {}, editablePedido, precios } = this.state;
-
-    if (e.target.name === 'envase_id') {
-      let precio = 0;
-
-      const precioArticulo = precios.find(p => p.envase_id === e.target.value);
-      if (precioArticulo) {
-        precio = precioArticulo.precio;
-      }
-
-      if (index !== null) {
-        editablePedido.items[index] = {
-          ...editablePedido.items[index],
-          monto: precio
-        };
-      } else {
-        editableItem = {
-          ...editableItem,
-          monto: precio
-        };
-      }
-    }
-
-    if (index !== null) {
-      editablePedido.items[index] = {
-        ...editablePedido.items[index],
-        [e.target.name]: e.target.value
-      };
-
-      this.setState({
-        editablePedido: {
-          ...editablePedido
-        }
-      });
-    } else {
-      this.setState({
-        editableItem: {
-          ...editableItem,
-          [e.target.name]: e.target.value
-        }
-      });
-    }
-  };
-
-  onDeleteItem = (itemIndex) => {
-    const { editablePedido } = this.state;
-    editablePedido.items.splice(itemIndex, 1);
-
-    this.setState({
-      editablePedido: {
-        ...editablePedido
-      }
-    });
-  };
-
-  getTotal = (cantidad, precio) => {
-    return isNaN(cantidad * precio) ? 0 : cantidad * precio;
-  };
-
   onSubmit = async () => {
     const { comercio, selectedTab, selectedEnvio, editablePedido } = this.state;
 
-    if (selectedTab === 0 && selectedEnvio === 'dia') {
+    if (selectedTab === 0 && selectedEnvio === 'dia' && this.props.nuevo) {
       const fecha = moment().format('YYYY-MM-DD');
       const fechaPedido = moment(editablePedido.fecha, 'DD/MM/YYYY').format('YYYY-MM-DD');
 
@@ -330,21 +296,17 @@ export class PedidoForm extends React.Component<PedidoFormProps, PedidoFormState
       }
     }
 
-    // let items = [];
-    //
-    // if (this.formDetailRef && this.formDetailRef.current) {
-    //   items = this.formDetailRef.current.getItems().filter(i => i.envase_id !== '').map(i => ({
-    //     envase_id: i.envase_id,
-    //     cantidad: numeral(i.cantidad).value() || 0,
-    //     monto: numeral(i.precio).value() || 0
-    //   }))
-    // }
+    let items = [];
 
-    const items = editablePedido.items.map(i => ({
-      envase_id: i.envase_id,
-      cantidad: numeral(i.cantidad).value() || 0,
-      monto: numeral(i.monto).value() || 0
-    }))
+    if (this.formDetailRef && this.formDetailRef.current) {
+      items = this.formDetailRef.current.getItems().filter(i => i.envase_id !== '').map(i => ({
+        movimiento_enc_id: i?.movimiento_enc_id,
+        movimiento_det_id: i?.movimiento_det_id,
+        envase_id: i.envase_id,
+        cantidad: numeral(i.cantidad).value() || 0,
+        monto: numeral(i.precio).value() || 0
+      }))
+    }
 
     const enc: IPedido = {
       visito: false,
@@ -354,35 +316,22 @@ export class PedidoForm extends React.Component<PedidoFormProps, PedidoFormState
       observaciones: editablePedido.observaciones,
       condicion_venta_id: editablePedido.condicion_venta_id,
       tipo_movimiento_id: editablePedido.tipo_movimiento_id,
-      estado_movimiento_id: editablePedido.hoja_ruta_id ? 6 : 2,
+      estado_movimiento_id: editablePedido.estado_movimiento_id,
       fecha: moment(editablePedido.fecha, 'DD/MM/YYYY').format('YYYY-MM-DD')
     };
 
-    const newPedido = await MovimientosService.createPedido(enc);
-    //const newPedido = {movimiento_enc_id: 1, condicion_venta_id: 3};
+    if (this.props.nuevo) {
+      const newPedido = await MovimientosService.createPedido(enc);
 
-    const det: Array<IItem> = items.map(i => ({
-      movimiento_enc_id: newPedido.movimiento_enc_id,
-      envase_id: i.envase_id,
-      cantidad: i.cantidad,
-      monto: i.cantidad * i.monto
-    }));
-    console.log('det', det);
-    await MovimientosService.createMovimientoItems(newPedido.movimiento_enc_id, det);
-
-    if (selectedTab === 1) {
-      const pedido = {
-        fecha: enc.fecha,
-        comercio_id: comercio.id,
+      const det: Array<IItem> = items.map(i => ({
         movimiento_enc_id: newPedido.movimiento_enc_id,
-        entregado: false,
-        pagado: newPedido.condicion_venta_id === 3
-      };
+        envase_id: i.envase_id,
+        cantidad: i.cantidad,
+        monto: i.cantidad * i.monto
+      }));
 
-      await ComerciosService.createPedidoComercio(pedido);
-    }
+      await MovimientosService.createMovimientoItems(newPedido.movimiento_enc_id, det);
 
-    if (newPedido.movimiento_enc_id) {
       this.setState({
         controlError: '',
         editablePedido: {
@@ -392,6 +341,23 @@ export class PedidoForm extends React.Component<PedidoFormProps, PedidoFormState
           fecha: moment().format('DD-MM-YYYY')
         },
         pedidoGenerado: newPedido.movimiento_enc_id
+      });
+    } else {
+      const updatedPedido = await MovimientosService.updatePedido(enc, editablePedido.movimiento_enc_id);
+      console.log('updatedPedido', updatedPedido);
+
+      const det: Array<IItem> = items.map(i => ({
+        movimiento_enc_id: updatedPedido.movimiento_enc_id,
+        movimiento_det_id: i?.movimiento_det_id,
+        envase_id: i.envase_id,
+        cantidad: i.cantidad,
+        monto: i.cantidad * i.monto
+      }));
+
+      await MovimientosService.updateMovimientoItems(updatedPedido.movimiento_enc_id, det);
+
+      this.setState({
+        controlError: ''
       });
     }
   };
@@ -453,7 +419,8 @@ export class PedidoForm extends React.Component<PedidoFormProps, PedidoFormState
 
   render() {
     const { nuevo } = this.props;
-    const { hojas, tipos, cliente, envases, clientes, choferes, comercio, canales, subzonas, loading, editarCliente, isAddingItem, selectedTab, selectedEnvio, controlError, condicionesVenta, pedidoConfirmado } = this.state;
+    const { hojas, tipos, cliente, envases, clientes, choferes, comercio, canales, subzonas, loading, editarCliente, isAddingItem, selectedTab, selectedEnvio, controlError, condicionesVenta, pedidoConfirmado, estadosMovimiento } = this.state;
+    console.log('editablePedido', this.getUpdatedPedido());
 
     const envasesOptions = envases.map(e => ({
       value: e.envase_id,
@@ -487,6 +454,11 @@ export class PedidoForm extends React.Component<PedidoFormProps, PedidoFormState
       label: t.tipo_movimiento_nombre,
       value: t.tipo_movimiento_id
     }));
+
+    const estadosOptions = estadosMovimiento.map(e => ({
+      label: e.estado_movimiento_nombre,
+      value: e.estado_movimiento_id
+    }))
 
     const filteredComercios = this.filterComercios();
 
@@ -581,7 +553,7 @@ export class PedidoForm extends React.Component<PedidoFormProps, PedidoFormState
                         ) : (
                           <>
                             <span>Canal:</span>
-                            <p>{cliente && canales.find(c => c.canal_id === cliente.canal_id).canal_nombre || ''}</p>
+                            <p>{cliente && canales.find(c => c.canal_id === cliente.canal_id)?.canal_nombre || ''}</p>
                           </>
                         )}
                       </div>
@@ -594,7 +566,7 @@ export class PedidoForm extends React.Component<PedidoFormProps, PedidoFormState
                         ) : (
                           <>
                             <span>Zona:</span>
-                            <p>{cliente && subzonas.find(s => s.sub_zona_id === cliente.zona_sub_id).sub_zona_nombre || ''}</p>
+                            <p>{cliente && subzonas.find(s => s.sub_zona_id === cliente.zona_sub_id)?.sub_zona_nombre || ''}</p>
                           </>
                         )}
                       </div>
@@ -609,7 +581,7 @@ export class PedidoForm extends React.Component<PedidoFormProps, PedidoFormState
                         ) : (
                           <>
                             <span>Condicion de Venta:</span>
-                            <p>{cliente && condicionesVenta.find(c => c.condicion_venta_id === cliente.condicion_venta_id).condicion_venta_nombre || ''}</p>
+                            <p>{cliente && condicionesVenta.find(c => c.condicion_venta_id === cliente.condicion_venta_id)?.condicion_venta_nombre || ''}</p>
                           </>
                         )}
                       </div>
@@ -625,76 +597,16 @@ export class PedidoForm extends React.Component<PedidoFormProps, PedidoFormState
                 </div>
               </div>
               <div className={styles.row}>
-                <div className={styles.DetalleWrapper}>
-                  <div className={styles.DetalleWrapperHeader}>
-                    <h3>Detalle Pedido</h3>
-                    <svg className={styles.Icons} onClick={() => this.addItem(false)}>
-                      <use xlinkHref={`/assets/images/sprite.svg#icon-plus-solid`}></use>
-                    </svg>
-                  </div>
-                  {this.getUpdatedPedido().items && this.getUpdatedPedido().items.map((i, index) => (
-                    <div className={classnames(styles.row, styles.ItemWrapper)} key={index}>
-                      <Select size='small' name='envase_id' placeholder='Producto...'
-                              value={this.getUpdatedPedido().items[index].envase_id} options={envasesOptions}
-                              onChange={(e) => this.onItemFieldChange(e, index)}
-                              className={styles.ItemSelectContainer}
-                      />
-                      <Input size='small' placeholder='Cantidad' name='cantidad'
-                             onChange={(e) => this.onItemFieldChange(e, index)}
-                             value={this.getUpdatedPedido().items[index].cantidad}
-                             className={styles.ItemInputContainer}
-                      />
-                      <Input disabled size='small' placeholder='Precio' name='monto'
-                             onChange={(e) => this.onItemFieldChange(e, index)}
-                             value={numeral(this.getUpdatedPedido().items[index].monto).format('$0,0.00')}
-                             className={styles.ItemInputContainer}
-                      />
-                      <Input disabled size='small' placeholder='Monto' name='monto' onChange={this.onItemFieldChange}
-                             value={numeral(this.getTotal(this.getUpdatedPedido().items[index].cantidad, this.getUpdatedPedido().items[index].monto)).format('$0,0.00')}
-                             className={styles.ItemInputContainer}
-                      />
-                      <svg className={styles.Icons} onClick={() => this.onDeleteItem(index)}>
-                        <use xlinkHref={`/assets/images/sprite.svg#icon-ban-solid`}></use>
-                      </svg>
-                    </div>
-                  ))}
-                  {isAddingItem && (
-                    <div className={classnames(styles.row, styles.ItemWrapper, styles.newItem)}>
-                      <Select size='small' name='envase_id' placeholder='Producto...'
-                              value={this.getUpdatedItem().envase_id} options={envasesOptions}
-                              onChange={this.onItemFieldChange}
-                              className={styles.ItemSelectContainer}
-                      />
-                      <Input size='small' placeholder='Cantidad' name='cantidad' onChange={this.onItemFieldChange}
-                             value={this.getUpdatedItem().cantidad}
-                             className={styles.ItemInputContainer}
-                      />
-                      <Input disabled size='small' placeholder='Precio' name='monto' onChange={this.onItemFieldChange}
-                             value={numeral(this.getUpdatedItem().monto).format('$0,0.00')}
-                             className={styles.ItemInputContainer}
-                      />
-                      <Input disabled size='small' placeholder='Monto' name='monto' onChange={this.onItemFieldChange}
-                             value={numeral(this.getTotal(this.getUpdatedItem().cantidad, this.getUpdatedItem().monto)).format('$0,0.00')}
-                             className={styles.ItemInputContainer}
-                      />
-                      <svg className={styles.Icons} onClick={() => this.addItem(true)}>
-                        <use xlinkHref={`/assets/images/sprite.svg#icon-check-solid`}></use>
-                      </svg>
-                      <svg className={styles.Icons}
-                           onClick={() => this.setState({ isAddingItem: false, editableItem: {} })}>
-                        <use xlinkHref={`/assets/images/sprite.svg#icon-ban-solid`}></use>
-                      </svg>
-                    </div>
-                  )}
-                </div>
+                <FormDetail
+                  ref={this.formDetailRef}
+                  precios={this.state.precios}
+                  items={this.getUpdatedPedido()?.items?.map(i => ({
+                    ...i,
+                    precio: i.monto / i.cantidad
+                  }))}
+                  envases={envases.map(e => ({value: e.envase_id, label: e.envase_nombre}))}
+                />
               </div>
-              {/*<div className={styles.row}>*/}
-              {/*  <FormDetail*/}
-              {/*    ref={this.formDetailRef}*/}
-              {/*    precios={this.state.precios}*/}
-              {/*    envases={envases.map(e => ({value: e.envase_id, label: e.envase_nombre}))}*/}
-              {/*  />*/}
-              {/*</div>*/}
               <div className={styles.row}>
                 <Select
                   size='small'
@@ -760,6 +672,15 @@ export class PedidoForm extends React.Component<PedidoFormProps, PedidoFormState
                     onChange={this.onFieldChange}
                     className={styles.ItemSelectContainer}
                   />
+                  <Select
+                    size='small'
+                    name='estado_movimiento_id'
+                    label={'Estado de Movimiento'}
+                    placeholder={'Estado...'}
+                    value={this.getUpdatedPedido().estado_movimiento_id} options={estadosOptions}
+                    onChange={this.onFieldChange}
+                    className={styles.ItemSelectContainer}
+                  />
                   {controlError && <p className={styles.ControlText}>{controlError}</p>}
                 </TabPanel>
                 <TabPanel>
@@ -791,15 +712,17 @@ export class PedidoForm extends React.Component<PedidoFormProps, PedidoFormState
               </Button>
             </div>
           </div>
-          <Modal
-            size={'small'}
-            show={this.state.pedidoGenerado !== null}
-            onOk={this.onConfirmarPedido}
-          >
-            <div style={{ height: '100%', padding: '1rem' }}>
-              {`El pedido fue generado exitosamente. El número de pedido es el ${this.state.pedidoGenerado}. ${this.state.pedidoGenerado && selectedTab === 1 && `Puede retirar su pedido por el punto de entrega ${comercio.razon_social}. La direccion es ${comercio.calle} ${comercio.altura}. El telefono es ${comercio.telefono}.`}`}
-            </div>
-          </Modal>
+          {this.props.nuevo && (
+            <Modal
+              size={'small'}
+              show={this.state.pedidoGenerado !== null}
+              onOk={this.onConfirmarPedido}
+            >
+              <div style={{ height: '100%', padding: '1rem' }}>
+                {`El pedido fue generado exitosamente. El número de pedido es el ${this.state.pedidoGenerado}.`}
+              </div>
+            </Modal>
+          )}
         </div>
       </div>
     );

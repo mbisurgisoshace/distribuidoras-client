@@ -89,7 +89,7 @@ export default class ReporteMapa extends React.Component<any, ReporteMapaState> 
           properties: {
             id: z.zona_id,
             zona: z.zona_nombre,
-            color: COLORS[i]
+            color: z.color
           },
           geometry: {
             type: 'Polygon',
