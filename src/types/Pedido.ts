@@ -24,6 +24,7 @@ export interface MovimientoItem {
 export interface UltimoPedidoView {
   pedido_id: number;
   items: [{
+    envase_id: number;
     envase_codigo: string;
     envase_nombre: string;
     cantidad: number;

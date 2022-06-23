@@ -34,6 +34,7 @@ import { NewHoja } from '../../../Hojas/components/NewHoja';
 import { AllPrecios } from '../../../Precios/components/AllPrecios';
 import { AllFeriados } from '../../../Feriados/components/AllFeriados';
 import { StockForm } from '../../../Stock/components/StockForm';
+import { NewObjetivo } from '../../../Objetivos/components/NewObjetivo';
 
 const AuthenticatedRoutes = enhanceWithHeader(() => (
   <React.Fragment>
@@ -73,6 +74,7 @@ const AuthenticatedRoutes = enhanceWithHeader(() => (
     <AuthenticatedRoute path='/stock/saldo-inicial' exact component={() => <StockForm tipoMovimiento={'Reposicion Averia'} />} />
     <AuthenticatedRoute path='/stock/reposicion-averia' exact component={() => <StockForm tipoMovimiento={'Reposicion Averia'} />} />
     <AuthenticatedRoute path='/stock/devolucion-averia' exact component={() => <StockForm tipoMovimiento={'Devolucion Averia'} />} />
+      <AuthenticatedRoute path='/objetivos/new' exact component={NewObjetivo} />
   </React.Fragment>
 ));
 

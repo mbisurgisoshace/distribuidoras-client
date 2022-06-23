@@ -124,12 +124,12 @@ export class StockForm extends React.Component<StockFormProps, StockFormState> {
       const stockItems = generarItems(editableStock.tipo_movimiento, items);
 
       const newMovimiento = await StockService.createMovimiento({
-        fecha: editableStock.fecha,
+        fecha: moment(editableStock.fecha, 'DD-MM-YYYY').format('YYYY-MM-DD'),
         tipo_movimiento: editableStock.tipo_movimiento,
         modulo: editableStock.modulo,
         nro_comprobante: editableStock.nro_comprobante
       });
-
+      console.log('newMovimiento', newMovimiento);
       stockItems.forEach(item => {
         item.movimiento_stock_enc_id = newMovimiento.movimiento_stock_enc_id
       })

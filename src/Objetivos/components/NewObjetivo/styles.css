@@ -1,0 +1,51 @@
+@import 'fonts';
+@import 'colors';
+
+.NewObjetivo {
+  width: 100%;
+  padding: 2rem;
+  background-color: $color-greyscale-lightest;
+}
+
+.NewObjetivoWrapper {
+  display: flex;
+  padding: 10px;
+  background-color: $color-white;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.16);
+  border-radius: 5px;
+  flex-wrap: wrap;
+  width: 1440px;
+  box-sizing: border-box;
+  margin: 0 auto;
+  position: relative;
+  flex-direction: column;
+}
+
+.DiasHabiles {
+    color: #27ae60;
+    font-size: 15px;
+    font-weight: bold;
+}
+
+h5 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+h6 {
+margin: 0;
+margin-left: 10px;
+font-size: 15px;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+  }
+
+.row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}

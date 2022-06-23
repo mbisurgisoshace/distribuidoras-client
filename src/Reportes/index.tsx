@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as XLSX from 'xlsx';
+import * as moment from 'moment';
 import * as FileSaver from 'file-saver';
 import { AgGridReact } from 'ag-grid-react';
 
@@ -7,9 +8,12 @@ import * as styles from './styles.css';
 import ReportesService from '../services/reportes';
 import { RoutedOuterWrapper as OuterWrapper } from '../shared/layouts/OuterWrapper';
 import { Button } from '../shared/components/Button';
+import { DatePicker } from '../shared/components/DatePicker';
 
 interface ReportesState {
   report: any;
+  desde: string;
+  hasta: string;
 }
 
 export class Reportes extends React.Component<any, ReportesState> {
@@ -20,7 +24,9 @@ export class Reportes extends React.Component<any, ReportesState> {
     super(props);
 
     this.state = {
-      report: null
+      report: null,
+      desde: '',
+      hasta: ''
     }
   }
 
@@ -69,6 +75,17 @@ export class Reportes extends React.Component<any, ReportesState> {
         report: result
       }))
     }
+
+    if (name === 'facturacion_pendiente' && this.state.desde && this.state.hasta) {
+      console.log('this.state.desde', this.state.desde)
+      console.log('this.state.hasta', this.state.hasta)
+      const desde = moment(this.state.desde, 'DD-MM-YYYY').format('YYYY-MM-DD');
+      const hasta = moment(this.state.hasta, 'DD-MM-YYYY').format('YYYY-MM-DD');
+      const result = await ReportesService.getPendienteFacturacion(desde, hasta);
+      this.setState(({
+        report: result
+      }))
+    }
   };
 
   exportAsExcelFile = (json, excelFilename) => {
@@ -104,6 +121,21 @@ export class Reportes extends React.Component<any, ReportesState> {
             <ul>
               <li onClick={() => this.onGenerateReport('recuperados')}>Recuperados</li>
               <li onClick={() => this.onGenerateReport('comodatos_movimientos')}>Movimientos Comodato</li>
+              <li onClick={() => this.onGenerateReport('facturacion_pendiente')}>
+                Control de Facturacion Pendiente
+                <DatePicker
+                  size='small'
+                  value={this.state.desde}
+                  name='desde'
+                  label={'Desde'}
+                  onChange={(e) => this.setState({...this.state, desde: e.target.value})}/>
+                  <DatePicker
+                  size='small'
+                  value={this.state.hasta}
+                  name='hasta'
+                  label={'Hasta'}
+                  onChange={(e) => this.setState({...this.state, hasta: e.target.value})}/>
+              </li>
             </ul>
             {this.state.report && <Button size='tiny' onClick={this.exportReport}>Exportar</Button>}
           </div>

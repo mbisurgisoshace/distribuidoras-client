@@ -13,12 +13,18 @@ import CondicionesVentaService from '../../../services/condicionesVenta';
 import HojasService from '../../../services/hojas';
 import { Select } from '../../../shared/components/Select';
 import TiposMovimientoService from '../../../services/tiposMovimiento';
+import { Button } from '../../../shared/components/Button';
+import TangoService from '../../../services/tango';
+import { RemitosModal } from './RemitosModal';
+import RemitosService from '../../../services/remitos';
+import toastNotify from '../../../shared/components/ToastNotification';
 
 interface MonitorState {
   tipos: Array<any>;
   hojas: Array<any>;
   pedidos: Array<any>;
   estados: Array<any>;
+  itemsRemito: Array<any>;
   isGeneracionRemitos: boolean;
   isActualizacionMasivOpen: boolean;
   condiciones: Array<CondicionVenta>;
@@ -42,6 +48,7 @@ export class Monitor extends React.Component<any, MonitorState> {
       hojas: [],
       pedidos: [],
       estados: [],
+      itemsRemito: [],
       condiciones: [],
       actualizacionMasiva: {
         hoja_ruta_id: null,
@@ -208,6 +215,61 @@ export class Monitor extends React.Component<any, MonitorState> {
     });
   };
 
+  onSincronizarRemitos = async () => {
+    try {
+      await TangoService.syncRemitos();
+
+      toastNotify.success({
+        header: 'Remitos sincronizados correctamente'
+      })
+    } catch (err) {
+      console.log('err', err);
+      toastNotify.error({
+        header: 'Ha ocurrido un problema',
+        description: err
+      })
+    }
+  }
+
+  onGenerarRemitos = () => {
+    const pedidosSeleccionados = this.gridApi.getSelectedNodes().map(selection => selection.data);
+    console.log('pedidosSeleccionados', pedidosSeleccionados);
+    const itemsRemito = pedidosSeleccionados.map(pedido => ({
+      fecha: pedido.Fecha.substring(0, 10),
+      id_pedido: pedido.MovimientoEncID,
+      razon_social: pedido.RazonSocial,
+      nro_remito: ''
+    }))
+    console.log('pedidosSeleccionados', pedidosSeleccionados);
+    this.setState({
+      itemsRemito,
+      isGeneracionRemitos: true
+    })
+  }
+
+  generarRemitos = async (remitos) => {
+    try {
+      await RemitosService.createRemitos(remitos);
+
+      this.setState({
+        itemsRemito: [],
+        isGeneracionRemitos: false
+      });
+
+      this.gridApi.deselectAll();
+
+      toastNotify.success({
+        header: 'Remitos generados correctamente'
+      })
+    } catch (err) {
+      console.log('err', err);
+      toastNotify.error({
+        header: 'Ha ocurrido un problema',
+        description: err
+      })
+    }
+  }
+
   render() {
     const {
       tipos,
@@ -245,7 +307,8 @@ export class Monitor extends React.Component<any, MonitorState> {
         <div className={styles.MonitorWrapper}>
           <PanelFiltros
             onSearch={this.onSearch}
-            onGeneracionRemitos={() => this.setState({ isGeneracionRemitos: true })}
+            onGeneracionRemitos={this.onGenerarRemitos}
+            onSincronizacionRemitos={this.onSincronizarRemitos}
             onActualizacionMasiva={() => this.setState({ isActualizacionMasivOpen: true })}
           />
           <div className='ag-theme-balham' style={{ flex: 1, width: '100%' }}>
@@ -259,16 +322,24 @@ export class Monitor extends React.Component<any, MonitorState> {
               suppressCellSelection={true}
             />
           </div>
-          <Modal
-            showCancel={true}
-            headerText={'Generacion de Remitos'}
-            show={isGeneracionRemitos}
-            onOk={() => this.onActualizarMasivo()}
-            onCancel={() => this.setState({ isGeneracionRemitos: false })}
-            size='large'
-          >
-            Generacion Remitos
-          </Modal>
+          {/*<Modal*/}
+          {/*  showCancel={true}*/}
+          {/*  headerText={'Generacion de Remitos'}*/}
+          {/*  show={isGeneracionRemitos}*/}
+          {/*  onOk={() => this.onActualizarMasivo()}*/}
+          {/*  onCancel={() => this.setState({ isGeneracionRemitos: false })}*/}
+          {/*  size='large'*/}
+          {/*>*/}
+          {/*  <Button size={'tiny'} onClick={this.onSincronizarRemitos}>Sincronizar Remitos</Button>*/}
+          {/*</Modal>*/}
+          {isGeneracionRemitos && (
+            <RemitosModal
+              show={isGeneracionRemitos}
+              items={this.state.itemsRemito}
+              onGenerar={this.generarRemitos}
+              onCancel={() => this.setState({ isGeneracionRemitos: false })}
+            />
+          )}
           <Modal
             showCancel={true}
             headerText={'Actualizacion Masiva de Pedidos'}

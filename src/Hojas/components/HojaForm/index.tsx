@@ -35,6 +35,7 @@ import HojasService from '../../../services/hojas';
 import { Checkbox } from '../../../shared/components/Checkbox';
 import CargasService from '../../../services/cargas';
 import ClientesService from '../../../services/clientes';
+import { DatePicker } from '../../../shared/components/DatePicker';
 
 type IEditable<T> = { [P in keyof T]?: T[P] };
 
@@ -138,7 +139,7 @@ export class HojaForm extends React.Component<HojaFormProps, HojaFormState> {
   onFieldChange = async (e) => {
     const { editableHoja = {} } = this.state;
     if (this.props.nuevo && e.target.name === 'zona_id') {
-      const diaSemana = diasMapper[moment(editableHoja.fecha).format('dddd')];
+      const diaSemana = diasMapper[moment(editableHoja.fecha,'DD-MM-YYYY').format('dddd')];
       const clientes = await ClientesService.getClientesPlantilla(parseInt(e.target.value), diaSemana);
       this.setState({
         clientes,
@@ -244,16 +245,17 @@ export class HojaForm extends React.Component<HojaFormProps, HojaFormState> {
         cierre_stock: false,
         control_stock: false,
         cierre_mobile: false,
-        fecha: moment(editableHoja.fecha).format('YYYY-MM-DD')
+        fecha: moment(editableHoja.fecha, 'DD-MM-YYYY').format('YYYY-MM-DD')
       });
-
+      console.log('newHoja', newHoja);
+      console.log('editableHoja', editableHoja);
       const movimientosEnc = this.state.movimientos.map(m => ({
         ...m,
         hoja_ruta_id: newHoja.hoja_ruta_id
       }))
 
       await HojasService.createMovimientosHoja(newHoja.hoja_ruta_id, movimientosEnc);
-
+      console.log('movimientos');
       this.setState({
         loading: false,
       });
@@ -354,7 +356,7 @@ export class HojaForm extends React.Component<HojaFormProps, HojaFormState> {
       vendio: false,
       tipo_movimiento_id: 1,
       estado_movimiento_id: 1,
-      fecha: moment(editableHoja.fecha).format('YYYY-MM-DD'),
+      fecha: moment(editableHoja.fecha, 'DD-MM-YYYY').format('YYYY-MM-DD'),
       cliente_id: selection.data.cliente_id,
       condicion_venta_id: selection.data.condicion_venta_id
     }))
@@ -393,12 +395,20 @@ export class HojaForm extends React.Component<HojaFormProps, HojaFormState> {
             <div className={styles.HojaNumero}>
               <span>#</span> {this.getUpdatedHoja().hoja_ruta_numero}
             </div>
-            <Input size='small' label='Fecha' name='fecha' onChange={this.onFieldChange}
-                   value={moment(this.getUpdatedHoja().fecha).format('DD/MM/YYYY')} disabled/>
-            {this.props.nuevo && (
-              <Input size='small' label='Nro Hoja' name='hoja_ruta_numero' onChange={this.onFieldChange}
-                     value={this.getUpdatedHoja().hoja_ruta_numero}/>
-            )}
+            {/*<Input size='small' label='Fecha' name='fecha' onChange={this.onFieldChange}*/}
+            {/*       value={moment(this.getUpdatedHoja().fecha).format('DD/MM/YYYY')} disabled/>*/}
+            <DatePicker
+              size='small'
+              value={this.getUpdatedHoja().fecha || moment().format('DD-MM-YYYY')}
+              name='fecha'
+              label={'Fecha'}
+              onChange={this.onFieldChange}/>
+            {/*{this.props.nuevo && (*/}
+            {/*  <Input size='small' label='Nro Hoja' name='hoja_ruta_numero' onChange={this.onFieldChange}*/}
+            {/*         value={this.getUpdatedHoja().hoja_ruta_numero}/>*/}
+            {/*)}*/}
+            <Input size='small' label='Nro Hoja' name='hoja_ruta_numero' onChange={this.onFieldChange}
+                   value={this.getUpdatedHoja().hoja_ruta_numero}/>
             <Select size='small' label='Zona' name='zona_id' placeholder='Seleccionar...'
                     value={this.getUpdatedHoja().zona_id}
                     options={zonasOptions} onChange={this.onFieldChange}/>

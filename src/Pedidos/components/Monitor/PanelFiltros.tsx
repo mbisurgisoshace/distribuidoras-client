@@ -16,6 +16,7 @@ interface FiltrosProps {
   onSearch: (currFilter) => void;
   onGeneracionRemitos: () => void;
   onActualizacionMasiva: () => void;
+  onSincronizacionRemitos: () => void;
 }
 
 interface FiltrosState {
@@ -186,7 +187,14 @@ export class PanelFiltros extends React.Component<FiltrosProps, FiltrosState> {
             size={'small'}
             onClick={() => this.props.onGeneracionRemitos()}
           >
-            Generacion Remitos
+            Generar Remitos
+          </Button>
+          <div style={{height: 10}} />
+          <Button
+            size={'small'}
+            onClick={() => this.props.onSincronizacionRemitos()}
+          >
+            Sincronizar Remitos
           </Button>
           <div style={{height: 10}} />
           <Button

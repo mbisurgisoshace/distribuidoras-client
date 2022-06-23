@@ -198,17 +198,29 @@ export class PedidoForm extends React.Component<PedidoFormProps, PedidoFormState
   }
 
   onClientSelected = async (cliente) => {
-    const { editablePedido } = this.state;
+    const { editablePedido, hojas, subzonas } = this.state;
+
+    const subzona = subzonas.find(sub => sub.sub_zona_id === cliente.zona_sub_id);
+    const hoja = hojas.find(hoj => hoj.zona_id === subzona.zona_id);
     const precios = await PreciosService.getListaPrecio(cliente.lista_precio_id);
+    //const ultimoPedido = await ClientesService.getLastPedidoCliente(cliente.cliente_id);
+    //console.log('precios', precios);
+    //console.log('ultimoPedido', ultimoPedido);
+    // const preciosUltimoPedido = ultimoPedido.items.map(item => ({
+    //   envase_id: item.envase_id,
+    //   precio: item.precio
+    // }))
 
     this.setState({
       cliente,
-      precios,
       editablePedido: {
         ...editablePedido,
         cliente_id: cliente.cliente_id,
+        hoja_ruta_id: hoja ? hoja.hoja_ruta_id : null,
         condicion_venta_id: cliente.condicion_venta_id
-      }
+      },
+      //precios: preciosUltimoPedido,
+      precios
     });
   };
 
@@ -450,6 +462,11 @@ export class PedidoForm extends React.Component<PedidoFormProps, PedidoFormState
       };
     });
 
+    hojasOptions.unshift({
+      label: 'Sin chofer',
+      value: null
+    });
+
     const condicionesVentaOptions = condicionesVenta.map(c => ({
       label: c.condicion_venta_nombre,
       value: c.condicion_venta_id
@@ -476,7 +493,7 @@ export class PedidoForm extends React.Component<PedidoFormProps, PedidoFormState
     }))
 
     const filteredComercios = this.filterComercios();
-
+    console.log('this.get', this.getUpdatedPedido());
     return (
       <div className={styles.PedidoForm}>
         {nuevo && pedidoConfirmado && window.location.reload(false)}
