@@ -107,6 +107,11 @@ export class Monitor extends React.Component<any, MonitorState> {
         cellClass: 'no-border'
       }, {
         sortable: true,
+        field: 'RazonSocial',
+        headerName: 'Razon Social',
+        cellClass: 'no-border'
+      }, {
+        sortable: true,
         resizable: true,
         field: 'Direccion',
         headerName: 'Direccion',
@@ -140,12 +145,14 @@ export class Monitor extends React.Component<any, MonitorState> {
         field: 'CanalNombre',
         headerName: 'Canal',
         cellClass: 'no-border'
-      }, {
-        sortable: true,
-        field: 'Monto',
-        headerName: 'Monto',
-        cellClass: 'no-border'
-      }, {
+      }, 
+      // {
+      //   sortable: true,
+      //   field: 'Monto',
+      //   headerName: 'Monto',
+      //   cellClass: 'no-border'
+      // }, 
+      {
         sortable: true,
         resizable: true,
         field: 'Apellido',

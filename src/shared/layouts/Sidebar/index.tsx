@@ -142,6 +142,26 @@ export class Sidebar extends React.Component<SidebarProps, SidebarState> {
 									expanded={expanded}
 								/>
 							</SidebarGroup>
+
+							<SidebarGroup
+								name="Reportes"
+								icon="list-ul-solid"
+								expanded={expanded}
+								group="/reportes"
+								match={match}
+							>
+								<SidebarMenu
+									menuitems={[
+										{ href: '/reportes', title: 'Reportes', subgroup: 'reportes' },
+										{ href: '/reportes/mapa', title: 'Reporte Geografico', subgroup: 'reporte_geografico' },
+									]}
+									title="Reportes"
+									group="/reportes"
+									match={match}
+									expanded={expanded}
+								/>
+							</SidebarGroup>
+							
 						</div>
 						{/*<svg*/}
 						{/*	className={classnames(styles.SidebarIcon, styles.SidebarChevron)}*/}

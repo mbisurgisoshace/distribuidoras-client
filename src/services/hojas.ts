@@ -5,6 +5,7 @@ export default class HojasService extends BaseService {
   static hojasRoute = '/hojas';
   static hojaRoute = '/hojas/{hoja_id}';
   static hojasByFechaRoute = '/hojas/fecha/{fecha}';
+  static hojasByEstadoRoute = '/hojas/estado/{estado}';
   static hojaMovimientosRoute = '/hojas/{hoja_id}/movimientos';
 
   public static async getHojas(): Promise<Array<IHoja>> {
@@ -17,6 +18,10 @@ export default class HojasService extends BaseService {
 
   public static async getHojasByFecha(fecha: string): Promise<Array<IHoja>> {
     return await this.getRequest<Array<IHoja>>(this.buildRoute(this.hojasByFechaRoute, { fecha: fecha }));
+  }
+
+  public static async getHojasByEstado(estado: number): Promise<Array<IHoja>> {
+    return await this.getRequest<Array<IHoja>>(this.buildRoute(this.hojasByEstadoRoute, { estado: estado }));
   }
 
   public static async createHoja(hoja: IHoja): Promise<IHoja> {
