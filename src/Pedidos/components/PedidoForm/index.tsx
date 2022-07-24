@@ -127,7 +127,8 @@ export class PedidoForm extends React.Component<PedidoFormProps, PedidoFormState
     const comercios = await ComerciosService.getComercios(true);
     const condicionesVenta = await CondicionesVentaService.getCondicionesVenta();
     const estadosMovimiento = await EstadosMovimientoService.getEstadosMovimiento();
-    const hojas = await HojasService.getHojasByFecha(moment().format('YYYY-MM-DD'));
+    //const hojas = await HojasService.getHojasByFecha(moment().format('YYYY-MM-DD'));
+    const hojas = await HojasService.getHojasByEstado(1);
 
     document.addEventListener('keypress', this.handleKeyPress);
 
@@ -457,7 +458,7 @@ export class PedidoForm extends React.Component<PedidoFormProps, PedidoFormState
     const hojasOptions = hojas.map(h => {
       const chofer = choferes.find(c => c.chofer_id === h.chofer_id);
       return {
-        label: `${startCase(chofer.apellido.toLowerCase())}, ${startCase(chofer.nombre.toLowerCase())}`,
+        label: `${startCase(chofer.apellido.toLowerCase())}, ${startCase(chofer.nombre.toLowerCase())} - ${h.hoja_ruta_numero}`,
         value: h.hoja_ruta_id
       };
     });
