@@ -48,6 +48,7 @@ import { FormDetail } from './FormDetail';
 import TiposMovimientoService from '../../../services/tiposMovimiento';
 import EstadosMovimientoService from '../../../services/estadosMovimiento';
 import toastNotify from '../../../shared/components/ToastNotification';
+import TablasService from '../../../services/TablasService';
 
 type IEditable<T> = { [P in keyof T]?: T[P] };
 
@@ -118,16 +119,26 @@ export class PedidoForm extends React.Component<PedidoFormProps, PedidoFormState
   }
 
   async componentDidMount() {
-    const envases = await EnvasesService.getEnvases();
-    const canales = await CanalesService.getCanales();
-    const subzonas = await SubzonasService.getSubzonas();
+    const tablas:any = await TablasService.getTablas(
+      'envases,subzonas,canales,condicionesVenta,estadosMovimiento,tiposMovimiento'
+    )
+
+    // const envases = await EnvasesService.getEnvases();
+    // const canales = await CanalesService.getCanales();
+    // const subzonas = await SubzonasService.getSubzonas();
+    const envases = tablas.envases;
+    const canales = tablas.canales;
+    const subzonas = tablas.subzonas;
     const clientes = await ClientesService.getClientes();
     const choferes = await ChoferesService.getChoferes();
-    const tipos = await TiposMovimientoService.getTiposMovimiento();
-    const comercios = await ComerciosService.getComercios(true);
-    const condicionesVenta = await CondicionesVentaService.getCondicionesVenta();
-    const estadosMovimiento = await EstadosMovimientoService.getEstadosMovimiento();
-    //const hojas = await HojasService.getHojasByFecha(moment().format('YYYY-MM-DD'));
+    //const tipos = await TiposMovimientoService.getTiposMovimiento();
+    const tipos = tablas.tiposMovimiento;
+    //const comercios = await ComerciosService.getComercios(true);
+    //const condicionesVenta = await CondicionesVentaService.getCondicionesVenta();
+    const condicionesVenta = tablas.condicionesVenta;
+    //const estadosMovimiento = await EstadosMovimientoService.getEstadosMovimiento();
+    const estadosMovimiento = tablas.estadosMovimiento;
+    
     const hojas = await HojasService.getHojasByEstado(1);
 
     document.addEventListener('keypress', this.handleKeyPress);
@@ -147,7 +158,7 @@ export class PedidoForm extends React.Component<PedidoFormProps, PedidoFormState
       subzonas,
       choferes,
       loading: false,
-      comercios,
+      //comercios,
       condicionesVenta,
       estadosMovimiento
     });

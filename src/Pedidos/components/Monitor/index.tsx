@@ -18,18 +18,21 @@ import TangoService from '../../../services/tango';
 import { RemitosModal } from './RemitosModal';
 import RemitosService from '../../../services/remitos';
 import toastNotify from '../../../shared/components/ToastNotification';
+import MotivosService from '../../../services/motivosService';
 
 interface MonitorState {
   tipos: Array<any>;
   hojas: Array<any>;
   pedidos: Array<any>;
   estados: Array<any>;
+  motivos: Array<any>;
   itemsRemito: Array<any>;
   isGeneracionRemitos: boolean;
   isActualizacionMasivOpen: boolean;
   condiciones: Array<CondicionVenta>;
   actualizacionMasiva: {
     hoja_ruta_id: number;
+    motivo_id: number;
     estado_movimiento_id: number;
     condicion_venta_id: number;
     tipo_movimiento_id: number;
@@ -48,10 +51,12 @@ export class Monitor extends React.Component<any, MonitorState> {
       hojas: [],
       pedidos: [],
       estados: [],
+      motivos: [],
       itemsRemito: [],
       condiciones: [],
       actualizacionMasiva: {
         hoja_ruta_id: null,
+        motivo_id: null,
         estado_movimiento_id: null,
         condicion_venta_id: null,
         tipo_movimiento_id: null
@@ -63,6 +68,7 @@ export class Monitor extends React.Component<any, MonitorState> {
 
   async componentDidMount() {
     const hojas = await HojasService.getHojas();
+    const motivos = await MotivosService.getMotivos();
     const tipos = await TiposMovimientoService.getTiposMovimiento();
     const estados = await EstadosMovimientoService.getEstadosMovimiento();
     const condiciones = await CondicionesVentaService.getCondicionesVenta();
@@ -71,6 +77,7 @@ export class Monitor extends React.Component<any, MonitorState> {
       hojas,
       tipos,
       estados,
+      motivos,
       condiciones
     });
 
@@ -214,6 +221,7 @@ export class Monitor extends React.Component<any, MonitorState> {
     this.setState({
       actualizacionMasiva: {
         hoja_ruta_id: null,
+        motivo_id: null,
         estado_movimiento_id: null,
         condicion_venta_id: null,
         tipo_movimiento_id: null
@@ -285,6 +293,7 @@ export class Monitor extends React.Component<any, MonitorState> {
       isActualizacionMasivOpen,
       hojas,
       estados,
+      motivos,
       condiciones,
       actualizacionMasiva
     } = this.state;
@@ -307,6 +316,11 @@ export class Monitor extends React.Component<any, MonitorState> {
     const tiposOptions = tipos.map(tip => ({
       label: tip.tipo_movimiento_nombre,
       value: tip.tipo_movimiento_id
+    }));
+
+    const motivosOptions = motivos.map(mot => ({
+      label: mot.MotivoNombre,
+      value: mot.MotivoID
     }));
 
     return (
@@ -356,6 +370,7 @@ export class Monitor extends React.Component<any, MonitorState> {
               isActualizacionMasivOpen: false,
               actualizacionMasiva: {
                 hoja_ruta_id: null,
+                motivo_id: null,
                 estado_movimiento_id: null,
                 condicion_venta_id: null,
                 tipo_movimiento_id: null
@@ -416,6 +431,20 @@ export class Monitor extends React.Component<any, MonitorState> {
                 actualizacionMasiva: {
                   ...actualizacionMasiva,
                   tipo_movimiento_id: e.target.value
+                }
+              })}
+            />
+            <Select
+              size='small'
+              label='Motivo'
+              name='motivo_id'
+              placeholder='Seleccionar...'
+              value={actualizacionMasiva.motivo_id}
+              options={motivosOptions}
+              onChange={(e) => this.setState({
+                actualizacionMasiva: {
+                  ...actualizacionMasiva,
+                  motivo_id: e.target.value
                 }
               })}
             />
